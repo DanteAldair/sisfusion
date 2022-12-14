@@ -352,7 +352,7 @@ class Usuarios extends CI_Controller
                 "id_gerente" => $props->id_gerente,
                 "id_subdirector" => $props->id_subdirector,
                 "id_regional" => $props->id_regional,
-                "id_sede" => $sedeCH,
+                // "id_sede" => $sedeCH,
                 "fecha_modificacion" => date("Y-m-d H:i:s"),
                 "modificado_por" => $this->session->userdata('id_usuario')
             );
