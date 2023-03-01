@@ -2,7 +2,7 @@
 <link href="<?= base_url() ?>dist/css/datatableNFilters.css" rel="stylesheet"/>
 <link href="<?= base_url() ?>dist/css/documentTree.css" rel="stylesheet"/>
 <body id="mainBody">
-    <div class="wrapper ">
+    <div class="wrapper">
         
         <?php
         $datos = array();

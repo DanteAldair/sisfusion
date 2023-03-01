@@ -1215,7 +1215,11 @@
 
 .cardDocument .realBox #documentsList {
   height: 60vh;
-  overflow: auto;
+  overflow: hidden;
+}
+
+.cardDocument .realBox #documentsList:hover {
+  overflow-y: scroll;
 }
 
 .cardDocument .realBox #documentsList .activeSB {

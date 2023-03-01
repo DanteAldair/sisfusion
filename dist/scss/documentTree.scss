@@ -5,7 +5,10 @@
     .realBox{
         #documentsList{
             height: 60vh;
-            overflow: auto;
+            overflow: hidden;
+            &:hover{
+                overflow-y: scroll;
+            }
             .activeSB{
                 border-radius: 8px!important;
                 background-color: $blueIndigoDeep!important;

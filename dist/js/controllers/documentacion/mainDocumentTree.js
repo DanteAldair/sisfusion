@@ -95,47 +95,59 @@ function fillDocumentsList(v, i) {
     let datos = seleccion.split(',');
     let ventaC = 1;
     let btnMostrarDoc = `<a class="list-group-item viewDocument border-none" data-indice="${i}">
-        <h4 class="list-group-item-heading m-0 w-100 overflow-text" data-toggle="tooltip" data-placement="top" title="${v.movimiento}">${v.movimiento}</h4>
+        <h6 class="list-group-item-heading m-0 w-100 overflow-text" data-toggle="tooltip" data-placement="top" title="${v.movimiento}">${v.movimiento}</h6>
     </a>`;
     
     if ( getFileExtension(v.expediente) == "pdf" ){
         if( (v.tipo_doc != 8 || v.tipo_doc != 66) && (id_rol_general == 7 || id_rol_general == 9 || id_rol_general == 3 || id_rol_general == 2) && (v.idMovimiento == 31 || v.idMovimiento == 85 || v.idMovimiento == 20 || v.idMovimiento == 63 || v.idMovimiento == 73 || v.idMovimiento == 82 || v.idMovimiento == 92 || v.idMovimiento == 96) && ventaC == 1 ){
-            btnMostrarDoc = `<a class="list-group-item d-flex viewDocument border-none" data-indice="${i}">
-                <button type="button" title= "Eliminar archivo" class="btn-data btn-warning delete" data-indice="${i}">
-                    <i class="fas fa-trash"></i>
-                </button>
-                <h4 class="list-group-item-heading m-0 w-100 overflow-text" data-toggle="tooltip" data-placement="top" title="${v.movimiento}">${v.movimiento}</h4>
+            btnMostrarDoc = `<a class="list-group-item viewDocument border-none" data-indice="${i}">
+            <h6 class="list-group-item-heading m-0 w-100 overflow-text" data-toggle="tooltip" data-placement="top" title="${v.movimiento}">${v.movimiento}</h6>  
+            <div>
+                <label style="font-weight:100; font-size:10px; margin:0">${(v.modificado).slice(0, (v.modificado).indexOf('.'))}</label>
+                <div>
+                    <button type="button" title= "Eliminar archivo" class="btn-data btn-warning delete" data-indice="${i}" style="font-size:11px; padding:0 7px; border-radius:25px">Eliminar</button>
+                </div>
+            </div>
             </a>`;
         }
     }
     else if (getFileExtension(v.expediente) == "NULL" || getFileExtension(v.expediente) == 'null' || getFileExtension(v.expediente) == ""){
         if ( ( v.idMovimiento == 7 || v.idMovimiento == 37 || v.idMovimiento == 41 || v.idMovimiento == 64 || v.idMovimiento == 66 || v.idMovimiento == 77 ) && id_rol_general == 6 && (v.tipo_doc==26 || v.tipo_doc==29)){
 
-            btnMostrarDoc = `<a class="list-group-item d-flex viewDocument border-none" data-indice="${i}">
-                <button type="button" '${disabled_option}' title= "Adjuntar archivo" class="btn-data btn-green update" data-indice="${i}>
-                    <i class="fas fa-cloud-upload-alt"></i>
-                </button>
-                <h4 class="list-group-item-heading m-0 w-100 overflow-text" data-toggle="tooltip" data-placement="top" title="${v.movimiento}">${v.movimiento}</h4>
+            btnMostrarDoc = `<a class="list-group-item viewDocument border-none" data-indice="${i}">
+                <h6 class="list-group-item-heading m-0 w-100 overflow-text" data-toggle="tooltip" data-placement="top" title="${v.movimiento}">${v.movimiento}</h6>
+                <div>
+                    <label style="font-weight:100; font-size:10px; margin:0">${(v.modificado).slice(0, (v.modificado).indexOf('.'))}</label>
+                    <div>
+                        <button type="button" '${disabled_option}' title= "Adjuntar archivo" class="btn-green update" data-indice="${i}" style="font-size:11px; padding:0 7px; border-radius:25px">Subir</button>
+                    </div>
+                </div>
             </a>`;
         }
         else if((v.idMovimiento == 31 || v.idMovimiento == 85 || v.idMovimiento == 20 || v.idMovimiento == 63 || v.idMovimiento == 73 || v.idMovimiento == 82 || v.idMovimiento == 92 || v.idMovimiento == 96) && (id_rol_general == 7 || id_rol_general == 9 || id_rol_general == 3 || id_rol_general == 2) && (ventaC == 1)){
 
-            btnMostrarDoc = `<a class="list-group-item d-flex viewDocument border-none" data-indice="${i}">
-                <button type="button" '${disabled_option}' title= "Adjuntar archivo" class="btn-data btn-green update" data-indice="${i}>
-                    <i class="fas fa-cloud-upload-alt"></i>
-                </button>
-                <h4 class="list-group-item-heading m-0 w-100 overflow-text" data-toggle="tooltip" data-placement="top" title="${v.movimiento}">${v.movimiento}</h4>
+            btnMostrarDoc = `<a class="list-group-item viewDocument border-none" data-indice="${i}">
+                <h6 class="list-group-item-heading m-0 w-100 overflow-text" data-toggle="tooltip" data-placement="top" title="${v.movimiento}">${v.movimiento}</h6>
+                <div class="d-flex justify-between">
+                    <label style="font-weight:100; font-size:10px; margin:0">${(v.modificado).slice(0, (v.modificado).indexOf('.'))}</label>
+                    <div>
+                        <button type="button" '${disabled_option}' title= "Adjuntar archivo" class="btn-green update" data-indice="${i}" style="font-size:11px; padding:0 7px; border-radius:25px">Subir</button>
+                    </div>
+                </div>
             </a>`;
         }
     }
     else if(id_rol_general ==7 || id_rol_general ==9 || id_rol_general ==3 || id_rol_general ==2){
         if( (v.idMovimiento == 31 || v.idMovimiento == 85 || v.idMovimiento == 20 || v.idMovimiento == 63 || v.idMovimiento == 73 || v.idMovimiento == 82 || v.idMovimiento == 92 || v.idMovimiento == 96) && v.tipo_doc != 66 ){
             
-            btnMostrarDoc = `<a class="list-group-item d-flex viewDocument border-none" data-indice="${i}">
-                <button type="button" '${disabled_option}' title= "Eliminar archivo" class="btn-data btn-warning delete" data-indice="${i}>
-                    <i class="fas fa-trash"></i>
-                </button>
-                <h4 class="list-group-item-heading m-0 w-100 overflow-text" data-toggle="tooltip" data-placement="top" title="${v.movimiento}">${v.movimiento}</h4>
+            btnMostrarDoc = `<a class="list-group-item viewDocument border-none" data-indice="${i}">
+                <h6 class="list-group-item-heading m-0 w-100 overflow-text" data-toggle="tooltip" data-placement="top" title="${v.movimiento}">${v.movimiento}</h6>
+                <div class="d-flex justify-between">
+                    <label style="font-weight:100; font-size:10px; margin:0">${(v.modificado).slice(0, (v.modificado).indexOf('.'))}</label>
+                    <div>
+                        <button type="button" '${disabled_option}' title= "Eliminar archivo" class="btn-warning delete" data-indice="${i}" style="font-size:11px; padding:0 7px; border-radius:25px">Eliminar</button>
+                    </div>
+                </div>
             </a>`;
         }
     }
@@ -143,10 +155,13 @@ function fillDocumentsList(v, i) {
         if(v.tipo_doc != 66 && ( v.tipo_doc == 26 || v.tipo_doc == 29 ) && id_rol_general == 6 ){
             if((v.idMovimiento == 37 || v.idMovimiento == 7 || v.idMovimiento == 64 || v.idMovimiento == 66 || v.idMovimiento == 77 || v.idMovimiento == 41) && (id_rol_current==6) && (v.tipo_doc==26 || v.tipo_doc==29)){
                 btnMostrarDoc = `<a class="list-group-item d-flex viewDocument border-none" data-indice="${i}">
-                    <button type="button" '${disabled_option}' title= "Eliminar archivo" class="btn-data btn-warning delete" data-indice="${i}>
-                        <i class="fas fa-trash"></i>
-                    </button>
-                    <h4 class="list-group-item-heading m-0 w-100 overflow-text" data-toggle="tooltip" data-placement="top" title="${v.movimiento}">${v.movimiento}</h4>
+                    <h6 class="list-group-item-heading m-0 w-100 overflow-text" data-toggle="tooltip" data-placement="top" title="${v.movimiento}">${v.movimiento}</h6>
+                    <div class="d-flex justify-between">
+                        <label style="font-weight:100; font-size:10px; margin:0">${(v.modificado).slice(0, (v.modificado).indexOf('.'))}</label>
+                        <div>
+                            <button type="button" '${disabled_option}' title= "Eliminar archivo" class="btn-warning delete" data-indice="${i}" style="font-size:11px; padding:0 7px; border-radius:25px">Eliminar</button>
+                        </div>
+                    </div>
                 </a>`;
             }
         }
