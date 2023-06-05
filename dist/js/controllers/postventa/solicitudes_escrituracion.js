@@ -1162,20 +1162,6 @@ $(document).on("change", ".selectpicker.notaria-select", async function (e) {
   }
 });
 
-$(document).on("click", ".saveNotaria", function () {
-  let tr = $(this).closest("tr");
-  let select = tr.find("select").val();
-  if (tr.find("select").val()) {
-    saveNotaria($(this).attr("data-idSolicitud"), select, $(this));
-  } else {
-    alerts.showNotification(
-      "top",
-      "right",
-      "Debe seleccionar una notaría",
-      "warning"
-    );
-  }
-});
 
 $(document).on("click", ".modalPresupuestos", function () {
   let idNxS = $(this).attr("data-idNxS");

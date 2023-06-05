@@ -1341,7 +1341,7 @@ class Postventa extends CI_Controller
                                             <tr>
                                                 <td style="font-size: 1em;">
                                                     <b>Fecha de contrato:</b><br>
-                                                    ' . $data->fecha_contrato . '
+                                                    ' . $data->modificado . '
                                                 </td>
                                                 <td style="font-size: 1em;">
                                                 <b>Motivo:</b><br>

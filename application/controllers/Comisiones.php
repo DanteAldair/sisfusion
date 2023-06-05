@@ -5473,7 +5473,7 @@ public function getUsersClient($lote,$compartida,$TipoVenta,$LupgarP,$mdb,$ismkt
       $responses = $this->Comisiones_model->validateDispersionCommissions($lote_1)->result_array();
       if(sizeof($responses) > 0 && $responses[0]['bandera'] != 0) {
         $respuesta[0] = 2;
-    } else {
+       } else {
     
             $disparador =  $this->input->post("id_disparador");
             if($disparador == '1' || $disparador == 1){
