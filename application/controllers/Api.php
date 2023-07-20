@@ -755,7 +755,7 @@ class Api extends CI_Controller
                 "exp" => $time + (24 * 60 * 60), // Tiempo en el que expirará el token (24 horas)
                 "data" => array("username" => "9m1%6n7DfR", "password" => "7%5bea3K&B^fMhfOw8Rj"),
             );
-            $token = '';
+            $token = 'EJkrr*8k6BYSDR%a';
             // $url = curl_init('https://prueba.gphsis.com/sisfusion/api/exitoArcus');
             $url = curl_init();
             curl_setopt($url, CURLOPT_URL, 'https://hook.us1.make.com/l3mh2xcfdsxob8l2ip28iv53ctikfwbm');
