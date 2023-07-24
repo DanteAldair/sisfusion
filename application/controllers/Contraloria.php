@@ -2743,7 +2743,7 @@ class Contraloria extends CI_Controller {
     }
 
     public function getRegistroDiarioPorFecha() {
-        $fechaFin = explode('/', $this->input->post("fecha_inicio"));
+        $fechaFin = explode('-', $this->input->post("fecha_inicio"));
         $begindDate = date("Y-m-d", strtotime("{$fechaFin[2]}-{$fechaFin[1]}-{$fechaFin[0]}"));
         $data = array();
         $data = $this->Contraloria_model->registroDiarioPorFecha($begindDate);
@@ -3119,5 +3119,11 @@ class Contraloria extends CI_Controller {
         }else {
             echo json_encode(0);
         }
+    }
+
+    public function getAllDsByLider()
+    {
+        $data = $this->Contraloria_model->getAllDsByLider($this->session->userdata('id_lider'));
+        echo json_encode($data);
     }
 }

@@ -61,7 +61,7 @@
 						<div class="modal-body">
 							<div class="row aligned-row">
 								<div class="col-sm-10 col-md-10 col-lg-10">
-									<label>Autoriza</label>
+									<label>Autoriza (<span class="isRequired">*</span>)</label>
 									<select name="id_aut" id="dirAutoriza" class="selectpicker select-gral m-0" data-style="btn btn-round" data-live-search="true" title="Selecciona una opción" data-size="7"></select>
 								</div>
 								<div class="col-sm-2 col-md-2 col-lg-2 d-flex align-end">
@@ -76,7 +76,7 @@
 							</div>
 							<div class="row">
 								<div id="functionAdd" class="col-sm-12 col-md-12 col-lg-12 mt-2">
-									<label>Observaciones: (<span class="isRequired">*</span> )</label>
+									<label>Observaciones: (<span class="isRequired">*</span>)</label>
 								</div>
 								<div class="col-sm-12 col-md-12 col-lg-12">
 									<textarea	class="text-modal " id="comentario_0" name="comentario_0" rows="3" placeholder="Ingresa tu comentario" maxlength="100" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
@@ -95,12 +95,11 @@
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-danger btn-simple" data-dismiss="modal">Cancelar</button>
-							<a type="submit"class="btn btn-success hidden" style="margin: 0px;" onclick="validateEmptyFields()" id="btnSubmitEnviar" data-dismiss="modal">
+							<a href="#" class="btn btn-primary finishS" style="margin: 0px;" onclick="return validateEmptyFields()" id="btnSubmit">
 									Enviar
 							</a>
-							<button type="submit"   >
+							<button type="submit" id="btnSubmitEnviar" class="btn btn-success hidden" data-dismiss="modal">
 							</button>
-							
 						</div>
 					</form>
 				</div>
@@ -119,7 +118,7 @@
 						</div>
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-danger btn-simple" data-dismiss="modal">Cancelar</button>
+						<button type="button" class="btn btn-danger btn-simple" data-dismiss="modal">CERRAR</button>
 					</div>
 				</div>
 			</div>
@@ -145,7 +144,10 @@
 												envió de correo electrónico a usuarios con rol "Subdirector" que se encuentren activos
 												(seleccionar usuario según sea el caso) con una solicitud de autorización
 												(dependiendo del estatus de la misma),
-												descarga de información en formatos: PDF y XLSX.
+												descarga de información en formatos: PDF y XLSX
+												<a href="https://youtu.be/1zcshxE2nP4" target="_blank" style="color: red">
+													<i class="fab fa-youtube p-0" rel="tooltip" data-placement="top" title="Tutorial" style="font-size:25px!important"></i>
+												</a>.
 											</p>
 											<table id="sol_aut" class="table-striped table-hover">
 												<thead>
@@ -172,7 +174,11 @@
 												A través de este panel(Autorizaciones) podrás realizar lo siguiente;
 												consulta de las solicitudes autorizadas,
 												visualización de los estatus correspondientes por cada una de las autorizaciones en proceso,
-												descarga de información en formatos: PDF y XLSX.<br>
+												descarga de información en formatos: PDF y XLSX
+												<a href="https://youtu.be/1zcshxE2nP4" target="_blank" style="color: red">
+													<i class="fab fa-youtube p-0" rel="tooltip" data-placement="top" title="Tutorial" style="font-size:25px!important"></i>
+												</a>.
+												<br>
 											</p>
 											<table id="addExp" class="table-striped table-hover">
 												<thead>
