@@ -1159,8 +1159,8 @@ class Contraloria extends CI_Controller {
             $data_asig = $this->Contraloria_model->get_id_asig($assigned_location);
             $id_asig = $data_asig->contador;
             $arreglo["asig_jur"] = $id_asig == 2765 ? 2876 : ($id_asig == 2876 ? 10463 : 2765);
-        } else if ($assigned_location == 4) { // EXPEDIENTES CIUDAD DE MÉXICO
-            $id_sede_jur = 4;
+        } else if ($assigned_location == 4 || $assigned_location == 15) { // EXPEDIENTES CIUDAD DE MÉXICO
+            $id_sede_jur = $assigned_location;
             $data_asig = $this->Contraloria_model->get_id_asig($assigned_location);
             $id_asig = $data_asig->contador;
 
@@ -1221,7 +1221,9 @@ class Contraloria extends CI_Controller {
                 echo json_encode($data);
             }else{
                 if ($this->Contraloria_model->updateSt($idLote, $arreglo, $arreglo2) == TRUE) {
-                    ($assigned_location == 1 || $assigned_location == 2 || $assigned_location == 4 || $assigned_location == 5 || $assigned_location == 3) ? $this->Contraloria_model->update_asig_jur($arreglo["asig_jur"], $id_sede_jur) : '';
+                    (in_array($assigned_location, array(1, 2, 3, 4, 5))) 
+                        ? $this->Contraloria_model->update_asig_jur($arreglo["asig_jur"], $id_sede_jur)
+                        : '';
                     $data['message'] = 'OK';
                     echo json_encode($data);
                 } else {
