@@ -126,12 +126,19 @@ class VentasAsistentes_model extends CI_Model {
             if ($id_usuario == 6831) { // YARETZI MARICRUZ ROSALES HERNANDEZ
                 $filtroGerente = "AND cl.id_gerente = 690";
                 $filtroSede = "";
-            } elseif ($id_usuario == 479) { //MARBELLA 
-                $filtroGerente = "AND cl.id_gerente = 690";
+            } else if ($id_usuario == 12318) { // EMMA CECILIA MALDONADO RAMÍREZ
+                $id_lider = $this->session->userdata('id_lider');
+                $filtroGerente = "AND cl.id_gerente IN ($id_lider, 11196, 5637)";
                 $filtroSede = "";
-            }
-            else if (in_array($id_usuario, array(7097, 7096, 10924, 7324, 5620))) // GRISELL MALAGON, EDGAR AGUILAR Y DALIA PONCE
+            } else if (in_array($id_usuario, array(7097, 7096, 10924, 7324, 5620, 13094))) // GRISELL MALAGON, EDGAR AGUILAR Y DALIA PONCE
                 $filtroSede = "AND l.ubicacion IN ('4', '9', '13', '14')"; // Ciudad de México, San Miguel de Allende, Estado de México Occidente y Estado de México Norte
+                else if (in_array($id_usuario, array(29, 7934))) // FERNANDA MONJARAZ Y SANDRA CAROLINA GUERRERO GARCIA
+                $filtroSede = "AND l.ubicacion IN ('5', '12')"; // León y Guadalajara
+            else if(in_array($id_usuario, array(13050))){
+                $id_lider = $this->session->userdata('id_lider');
+                $filtroGerente = "AND cl.id_gerente IN ($id_lider)";
+                $filtroSede = " AND l.ubicacion IN ($id_sede, '4')";
+            }
             
             $where = "l.idStatusContratacion IN (7, 11) AND l.idMovimiento IN (37, 7, 64, 66, 77, 41) AND l.status8Flag = 0 AND cl.status = 1 $filtroSede $filtroGerente";
         }
@@ -284,7 +291,11 @@ class VentasAsistentes_model extends CI_Model {
             if ($id_usuario == 6831) { // YARETZI MARICRUZ ROSALES HERNANDEZ
                 $filtroGerente = "AND cl.id_gerente = 690";
                 $filtroSede = "";
-            } else if (in_array($id_usuario, array(7097, 7096, 10924, 7324, 5620))) // GRISELL MALAGON, EDGAR AGUILAR Y DALIA PONCE
+            } else if ($id_usuario == 12318) { // EMMA CECILIA MALDONADO RAMÍREZ
+                $id_lider = $this->session->userdata('id_lider');
+                $filtroGerente = "AND cl.id_gerente IN ($id_lider, 11196, 5637)";
+                $filtroSede = "";
+            } else if (in_array($id_usuario, array(7097, 7096, 10924, 7324, 5620, 13094))) // GRISELL MALAGON, EDGAR AGUILAR Y DALIA PONCE
                 $filtroSede = "AND l.ubicacion IN ('4', '9', '13', '14')"; // Ciudad de México, San Miguel de Allende, Estado de México Occidente y Estado de México Norte
             
             $where = "l.idStatusContratacion = 13 AND l.idMovimiento IN (43, 68) AND cl.status = 1 $filtroSede $filtroGerente";
