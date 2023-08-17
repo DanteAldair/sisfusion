@@ -21,7 +21,7 @@ class Asesor extends CI_Controller
 
         $this->load->library(array('session', 'form_validation'));
         //LIBRERIA PARA LLAMAR OBTENER LAS CONSULTAS DE LAS  DEL MENÚ
-        $this->load->library(array('session', 'form_validation', 'get_menu'));
+        $this->load->library(array('session', 'form_validation', 'get_menu','permisos_sidebar'));
         $this->load->library('email');
 
         $this->load->helper(array('url', 'form'));
@@ -32,6 +32,8 @@ class Asesor extends CI_Controller
 
         $val =  $this->session->userdata('certificado'). $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
         $_SESSION['rutaController'] = str_replace('' . base_url() . '', '', $val);
+        $rutaUrl = explode($_SESSION['rutaActual'], $_SERVER["REQUEST_URI"]);
+        $this->permisos_sidebar->validarPermiso($this->session->userdata('datos'),$rutaUrl[1],$this->session->userdata('opcionesMenu'));
     }
     public function index()
     {
@@ -680,7 +682,6 @@ class Asesor extends CI_Controller
         exit;
     }
     public function tableClienteDS(){
-        $objDatos = json_decode(file_get_contents("php://input"));
         $dato = $this->Asesor_model->registroClienteDS($this->input->post('idCondominio'));
         $data = array();
         for ($i = 0; $i < COUNT($dato); $i++) {
@@ -2854,6 +2855,14 @@ class Asesor extends CI_Controller
                     echo json_encode(['code' => 200]);
                 }
             } else {
+                if (count($idCopArray) > 0) {
+                    for ($i = 0; $i < sizeof($idCopArray); $i++) {
+                        $this->db->query("UPDATE copropietarios SET correo = '" . $emailCopArray[$i] . "', telefono = '" . $telefono1CopArray[$i] . "', telefono_2 = '" . $telefono2CopArray[$i] . "', fecha_nacimiento = '" . $fNacimientoCopArray[$i] . "', nacionalidad = '" . $nacionalidadCopArray[$i] . "', originario_de = '" . $originarioCopArray[$i] . "', domicilio_particular = '" . $idParticularCopArray[$i] . "', estado_civil = '" . $eCivilCopArray[$i] . "', conyuge = '" . $conyugeCopArray[$i] . "', regimen_matrimonial = '" . $rMatrimonialCopArray[$i] . "', ocupacion = '" . $ocupacionCopArray[$i] . "', posicion = '" . $puestoCopArray[$i] . "', empresa = '" . $empresaCopArray[$i] . "', antiguedad = '" . $antiguedadCopArray[$i] . "', edadFirma = '" . $edadFirmaCopArray[$i] . "', direccion = '" . $domEmpCopArray[$i] . "',
+                                rfc='" . $rfcCopArray[$i] . "',  tipo_vivienda=" . $tipoViviendaCopArray[$i] . "
+                            WHERE id_copropietario = " . $idCopArray[$i]);
+                    }
+                }
+
                 if ($this->Asesor_model->editaRegistroClienteDS_2($id_cliente, $arreglo_cliente, $arreglo_ds)) {
                     if (count($checkIfRefExist) <= 0) {
                         $arreglo_referencia2["id_cliente"] = $id_cliente;
@@ -2980,12 +2989,15 @@ class Asesor extends CI_Controller
         $id_cliente = $this->input->post('idCliente');
         $tipo_comprobante = $this->input->post('tipo_comprobante');
 
-        $cliente = $this->Clientes_model->clienteAutorizacion($id_cliente);
-        if (intval($cliente->autorizacion_correo) !== AutorizacionClienteOpcs::VALIDADO || intval($cliente->autorizacion_sms) !== AutorizacionClienteOpcs::VALIDADO) {
-            $data['message'] = 'VERIFICACION CORREO/SMS';
-            echo json_encode($data);
-            return;
+        if ($this->session->userdata('id_rol') != 17) {
+            $cliente = $this->Clientes_model->clienteAutorizacion($id_cliente);
+            if (intval($cliente->autorizacion_correo) !== AutorizacionClienteOpcs::VALIDADO || intval($cliente->autorizacion_sms) !== AutorizacionClienteOpcs::VALIDADO) {
+                $data['message'] = 'VERIFICACION CORREO/SMS';
+                echo json_encode($data);
+                return;
+            }
         }
+        
 
         $valida_tventa = $this->Asesor_model->getTipoVenta($idLote);//se valida el tipo de venta para ver si se va al nuevo status 3 (POSTVENTA)
         if($valida_tventa[0]['tipo_venta'] == 1 ){
@@ -3900,9 +3912,8 @@ class Asesor extends CI_Controller
             'descripcion' => $this->input->post("desc"),
             'archivo' => $newFileName,
             'estatus' => 1,
-            'usuario' => 666,
+            'usuario' => $this->session->userdata('id_usuario'),
             'fecha_creacion' => date("Y-m-d H:i:s"),
-            'fecha_modificacion' => date("Y-m-d H:i:s")
         ];
         $uploadFileDir = './static/documentos/carpetas/';
         $dest_path = $uploadFileDir . $newFileName;
@@ -3930,7 +3941,8 @@ class Asesor extends CI_Controller
                 'nombre' => $this->input->post("nombreE"),
                 'descripcion' => $this->input->post("descripcionE"),
                 'archivo' => $newFileName,
-                'estatus' => $this->input->post("estatus")
+                'estatus' => $this->input->post("estatus"),
+                'fecha_modificacion' => date("Y-m-d H:i:s")
             ];
             $response = $this->Asesor_model->updateCarpeta($data, $this->input->post("idCarpeta"));
             echo json_encode($response);
@@ -3938,7 +3950,8 @@ class Asesor extends CI_Controller
             $data = [
                 'nombre' => $this->input->post("nombreE"),
                 'descripcion' => $this->input->post("descripcionE"),
-                'estatus' => $this->input->post("estatus")
+                'estatus' => $this->input->post("estatus"),
+                'fecha_modificacion' => date("Y-m-d H:i:s")
             ];
             $response = $this->Asesor_model->updateCarpeta($data, $this->input->post("idCarpeta"));
             echo json_encode($response);
@@ -4067,11 +4080,6 @@ class Asesor extends CI_Controller
         $fileName = $_FILES['docArchivo1']['name'];
         $fileSize = $_FILES['docArchivo1']['size'];
         $fileType = $_FILES['docArchivo1']['type'];
-        // echo( $fileTmpPath);
-        echo( $fileName);
-        // echo( $fileSize);
-        // echo( $fileType);
-
         $fileNameCmps = explode(".", $fileName);
         $fileExtension = strtolower(end($fileNameCmps));
         $newFileName = md5(time() . $fileName) . '.' . $fileExtension;
@@ -4927,6 +4935,20 @@ class Asesor extends CI_Controller
     {
         $caracteres_permitidos = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         return substr(str_shuffle($caracteres_permitidos), 0, $longitud);
+    }
+
+    function diccionarioResidenciales() {
+        $this->load->view('template/header');
+        $this->load->view('asesor/diccionarioResidenciales_view');
+    }
+
+    function getResidenciales()
+    {
+        $data = $this->General_model->getResidenciales();
+        if ($data != null)
+            echo json_encode($data);
+        else
+            echo json_encode(array());
     }
 }
 ?>

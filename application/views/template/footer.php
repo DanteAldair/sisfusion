@@ -39,15 +39,12 @@
 <script src="<?=base_url()?>dist/js/material-dashboard2.js"></script>
 <!-- Material Dashboard DEMO methods, don't include it in your project! -->
 <script src="<?=base_url()?>dist/js/demo.js"></script>
-
 <script src="<?=base_url()?>dist/js/alerts.js"></script>
 <script src="<?=base_url()?>dist/js/funciones-generales.js"></script>
-
 <script src="<?=base_url()?>dist/js/controllers/select2/select2.full.min.js"></script>
 <script src="<?=base_url()?>dist/js/fullcalendar/main.js"></script>
 <script src="<?=base_url()?>dist/js/fullcalendar/locales-all.js"></script>
 <script src="<?=base_url()?>dist/js/controllers/general/main_services.js"></script>
-
 
 <script src="https://cdn.datatables.net/buttons/1.6.1/js/dataTables.buttons.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
@@ -58,6 +55,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
 <script src="<?= base_url() ?>dist/js/moment.min.js"></script>
 
+<script src="<?= base_url() ?>dist/js/es.js"></script>
+<script src="<?= base_url() ?>dist/js/bootstrap-datetimepicker.js"></script>
+<script src="<?= base_url() ?>dist/js/fullcalendar.min.js"></script>
 
 <!-- <script async defer src="https://apis.google.com/js/api.js" onload="this.onload=function(){};handleClientLoad()" onreadystatechange="if (this.readyState === 'complete') this.onload()"></script> -->
 <!-- <script src="<?=base_url()?>dist/js/controllers/dashboard/agenda/side_calendar.js"></script> -->
@@ -71,15 +71,7 @@
 
 	$(document).ready(function() {
 		demo.initDashboardPageCharts();
-		demo.initVectorMap();
-        <?php
-        //comentar este fragmento de codigo para NO mostrar el mensaje de aviso
-        if(in_array($this->session->userdata('id_rol'), array(17, 70, 7, 9, 3, 6, 2, 5, 4, 8))){
-            if ($this->session->userdata('no_show_modal_info')==0) {
-                echo '$("#avisoNovedades").modal("toggle");';
-            }
-        }
-        ?>
+
 	});
 
     function validaCheckSession(){
@@ -95,11 +87,7 @@
     var id_rol_global = <?= (empty($this->session->userdata('id_rol')) ? 0 : $this->session->userdata('id_rol')) ?>;
 </script>
 
-<?php
-
-
-
-if($this->session->userdata('id_rol') == 7 && $this->session->userdata('asesor_guardia')==1){?>
+<?php if($this->session->userdata('id_rol') == 7 && $this->session->userdata('asesor_guardia')==1){?>
 
 
 <script src="<?=base_url()?>dist/js/socket.io.js"></script>
@@ -122,7 +110,6 @@ if($this->session->userdata('id_rol') == 7 && $this->session->userdata('asesor_g
     var mySound = new Audio('../static/tono-mensaje.mp3');
     let im = '<?=base_url()?>static/images/perfil/'+perfil[0].id_usuario+'/'+perfil[0].foto;
     if ($(window).width() < 996){
-        console.log("chico");
     }
     else {
         var socket = io('https://chatcomercial.gphsis.com/', {query:{
@@ -141,7 +128,6 @@ if($this->session->userdata('id_rol') == 7 && $this->session->userdata('asesor_g
         var i=0;
         function sendNotify(data, numeroNot)
         {
-            // console.log(data);
             $('#cpoNtallSys').empty();
 
             if(data.length >0)
@@ -234,7 +220,6 @@ if($this->session->userdata('id_rol') == 7 && $this->session->userdata('asesor_g
         });
 
     }
-
 
 
 
