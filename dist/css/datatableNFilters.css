@@ -1933,6 +1933,8 @@ table thead tr {
 
 table thead tr th {
   padding: 0px !important;
+  text-align: center;
+  font-weight: 300;
 }
 
 table thead tr th input {

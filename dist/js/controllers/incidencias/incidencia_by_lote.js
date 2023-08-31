@@ -12,12 +12,21 @@ $("#modal_avisos").draggable({
     handle: ".modal-header"
 }); 
 
+$('body').tooltip({
+    selector: '[data-toggle="tooltip"], [title]:not([data-toggle="popover"])',
+    trigger: 'hover',
+    container: 'body'
+}).on('click mousedown mouseup', '[data-toggle="tooltip"], [title]:not([data-toggle="popover"])', function () {
+    $('[data-toggle="tooltip"], [title]:not([data-toggle="popover"])').tooltip('destroy');
+});
+
 var idLote = 0;
 
 function selectOpcion(){
     id_cliente = document.getElementById("clientes2").value;
     idLote     = document.getElementById("lotes1").value;
     var parent = $('#opcion').val();
+    $('#spiner-loader').removeClass('hide');
     $('#modal_avisitos').modal('hide');
     document.getElementById('UserSelect').innerHTML='';
     $('#usuarioid4 option').remove(); 
@@ -25,30 +34,31 @@ function selectOpcion(){
     $('#usuarioid4').val('default');
     $("#usuarioid4").selectpicker("refresh");
     if(parent == 1){
+        $('#spiner-loader').addClass('hide');
         $.getJSON( general_base_url + "incidencias/getUserInventario/"+id_cliente).done( function( data ){
             $('#miModalInventario .invent').html('');
             $('#miModalInventario .invent').append(`
             <h5>Usuarios titulares registrados</h5>
             <div class="row">
                 <div class="col-md-6" id="ase2">
-                    <b><label class="control-label" >Asesor</b></label>
-                    <input class="form-control input-gral ng-invalid ng-invalid-required" required readonly="true" value="${data.asesor}" style="font-size:12px;">
+                    <label class="control-label pl-1">Asesor</label>
+                    <input class="form-control input-gral" required readonly="true" value="${data.asesor}" style="font-size:12px;">
                 </div>
                 <div class="col-md-6" id="coor2">
-                    <b><label class="control-label" >Coordinador</b></label>
-                    <input class="form-control input-gral ng-invalid ng-invalid-required" required readonly="true" value="${data.coordinador == '' || data.coordinador == ' ' || data.coordinador == '  ' ? 'NO REGISTRADO' : data.coordinador}" style="font-size:12px;">
+                    <label class="control-label pl-1">Coordinador</label>
+                    <input class="form-control input-gral" required readonly="true" value="${data.coordinador == '' || data.coordinador == ' ' || data.coordinador == '  ' ? 'NO REGISTRADO' : data.coordinador}" style="font-size:12px;">
                 </div>
                 <div class="col-md-6" id="ger2">
-                    <b><label class="control-label" >Gerente</b></label>
-                    <input class="form-control input-gral ng-invalid ng-invalid-required" required readonly="true" value="${data.gerente}" style="font-size:12px;">
+                    <label class="control-label pl-1">Gerente</label>
+                    <input class="form-control input-gral" required readonly="true" value="${data.gerente}" style="font-size:12px;">
                 </div>
                 <div class="col-md-6" id="sub">
-                    <b><label class="control-label" >Sub-director</b></label>
-                    <input class="form-control input-gral ng-invalid ng-invalid-required" required readonly="true" value="${data.subdirector}" style="font-size:12px;">
+                    <label class="control-label pl-1">Subdirector</label>
+                    <input class="form-control input-gral" required readonly="true" value="${data.subdirector}" style="font-size:12px;">
                 </div>
                 <div class="col-md-6" id="regio">
-                    <b><label class="control-label" >Regional</b></label>
-                    <input class="form-control input-gral ng-invalid ng-invalid-required" required readonly="true" value="${data.regional}" style="font-size:12px;">
+                    <label class="control-label pl-1">Director Regional</label>
+                    <input class="form-control input-gral" required readonly="true" value="${data.regional}" style="font-size:12px;">
                 </div>
             </div>
                 <input type="hidden" value="${data.id_asesor}" id="asesor" name="asesor">
@@ -68,6 +78,7 @@ function selectOpcion(){
         });
     }
     else{
+        $('#spiner-loader').addClass('hide');
         //VENTA COMPARTIDA
         let id_asesor=0;
         $.getJSON( general_base_url + "Incidencias/getUserVC/"+id_cliente).done( function( data ){
@@ -147,21 +158,22 @@ function selectOpcion(){
                 $('#miModalVcNew').modal('show');
             }
             else if(cuantos == 1){
+                $('#spiner-loader').addClass('hide');
                 $('#miModalVc .vc').html('');
                 $('#miModalVc .vc').append(`
                     <h5>Usuarios registrados en venta compartida</h5>
                     <div class="row">
                         <div class="col-md-4" id="ase">
-                            <input class="form-control input-gral ng-invalid ng-invalid-required" required readonly="true" value="${data[0].asesor}" style="font-size:12px;">
-                            <b><p style="font-size:12px;">Asesor</b></p>
+                            <input class="form-control input-gral" required readonly="true" value="${data[0].asesor}" style="font-size:12px;">
+                            <b><p class="pl-1" style="font-size:12px;">Asesor</p></b>
                         </div>
                         <div class="col-md-4" id="coor">
-                            <input class="form-control input-gral ng-invalid ng-invalid-required" required readonly="true" value="${data[0].coordinador == '' || data[0].coordinador == ' ' || data[0].coordinador == '  ' ? 'NO REGISTRADO' : data[0].coordinador}" style="font-size:12px;color:${data[0].coordinador == '' || data[0].coordinador == ' ' || data[0].coordinador == '  ' ? 'red' : 'black'}">
-                            <b><p style="font-size:12px;">Coordinador</b></p>
+                            <input class="form-control input-gral" required readonly="true" value="${data[0].coordinador == '' || data[0].coordinador == ' ' || data[0].coordinador == '  ' ? 'NO REGISTRADO' : data[0].coordinador}" style="font-size:12px;color:${data[0].coordinador == '' || data[0].coordinador == ' ' || data[0].coordinador == '  ' ? 'red' : 'black'}">
+                            <b><p class="pl-1" style="font-size:12px;">Coordinador</p></b>
                         </div>
                         <div class="col-md-4" id="ger">
-                            <input class="form-control input-gral ng-invalid ng-invalid-required" required readonly="true" value="${data[0].gerente}" style="font-size:12px;">
-                            <b><p style="font-size:12px;">Gerente</b></p>
+                            <input class="form-control input-gral" required readonly="true" value="${data[0].gerente}" style="font-size:12px;">
+                            <b><p class="pl-1" style="font-size:12px;">Gerente</p></b>
                         </div>
                     </div>
                     <input type="hidden" value="${data[0].id_vcompartida}" id="id_vc" name="id_vc">
@@ -179,6 +191,7 @@ function selectOpcion(){
                     $('#miModalVc').modal('show');
             }
             else if(cuantos == 2){
+                $('#spiner-loader').addClass('hide');
                 $('#modal_avisos .modal-body').html('');
                 $('#modal_avisos .modal-body').append(`
                 <h4><em>Revisar con sistema para esté caso.</em></h4>`);
@@ -204,23 +217,25 @@ $("#asesorold").change(function() {
                 $("#info").css("overflow", "scroll");
             }
             $('#info').append(`
-            <table class="table">
-            <thead style="font-size:9px;text-align:center;">
+            <h6 class="text-center">Detalles del asesor</h6>
+            <table class="table-striped table-hover" " id="asesorID">
+            <thead style="color:white; font-weight: 300; font-size: 10px; background-color: #143860; text-align:center">
             <tr>
                 <th>ID LOTE</th>
                 <th>LOTE</th>
-                <th>COMISIÓN TOTAL</th>
+                <th >COMISIÓN TOTAL</th>
                 <th>COMISIÓN TOPADA</th>
                 <th>COMISIÓN NUEVO ASESOR</th>
             </tr>
-            <tbody class="tinfo" style="font-size:12px;text-align:center;">`);
+
+            <tbody class="tinfo">`);
             for( var i = 0; i<len; i++){
                 $('#info .tinfo').append(`<tr>
                 <td>${data[0][i].id_lote}</td>
                 <td>${data[0][i].nombreLote}</td>
-                <td>$${formatMoney(data[0][i].com_total)}</td>
-                <td>$${formatMoney(data[0][i].tope)}</td>
-                <td style="color:green;">$${formatMoney(data[0][i].resto)}</td>
+                <td>${formatMoney(data[0][i].com_total)}</td>
+                <td>${formatMoney(data[0][i].tope)}</td>
+                <td style="color:green;">${formatMoney(data[0][i].resto)}</td>
                 </tr>`);    
             }
             $('#info').append(`</tbody></thead></table>`);
@@ -484,9 +499,9 @@ function Regresar(i,por,colab,puesto,precioLote){
     $('#modal_avisos .modal-body').html('');
     $('#modal_avisos .modal-footer').html('');
     let total = parseFloat(precioLote * (por / 100));
-    $('#modal_avisos .modal-body').append(`<h4 class="card-title"><b>Revertir cambio</b></h4>`); 
+    $('#modal_avisos .modal-body').append(`<h4 class="card-title text-center"><b>Revertir cambio</b></h4>`); 
     $('#modal_avisos .modal-body').append(`<h5>¿Seguro que desea regresar la comisión del  <b>${puesto} - ${colab}</b>?</h5>
-    <em>El porcentaje anterior es de ${por} y su comisión total corresponde a <b style="color:green;">$${formatMoney(total)}</b>. </em>
+    <em>El porcentaje anterior es de ${por} y su comisión total corresponde a <b style="color:green;">${formatMoney(total)}</b>. </em>
     <br>
     <div class="row">
         <div class="col-md-12">
@@ -499,7 +514,7 @@ function Regresar(i,por,colab,puesto,precioLote){
         CANCELAR
     </button>
     <button type="button" onclick="SaveAjusteRegre(${i},${por},${total})" 
-        id="" class="btn btn-gral-data" style="background:#003d82;" value="GUARDAR">
+        id="" class="btn btn-primary" value="GUARDAR">
         GUARDAR
     </button>    
     `);
@@ -639,7 +654,7 @@ function Editar(i,precio,id_usuario){
                 if(len == 0){
                     let nuevoPendient=parseFloat(comisionTotal - abonado);
                     $('#pendiente_'+i).val(formatMoney(nuevoPendient));
-                    $('#modal_avisos .modal-body').append('<p>La nueva comisión total <b style="color:green;">$'+formatMoney(comisionTotal)+'</b> es menor a lo abondado, No se encontraron pagos disponibles para eliminar. <b style="color:red;">Aplicar los respectivos descuentos</b></p>');
+                    $('#modal_avisos .modal-body').append('<p>La nueva comisión total <b style="color:green;">'+formatMoney(comisionTotal)+'</b> es menor a lo abondado, No se encontraron pagos disponibles para eliminar. <b style="color:red;">Aplicar los respectivos descuentos</b></p>');
                 }
                 else{
                     let suma = 0;
@@ -668,10 +683,10 @@ function Editar(i,precio,id_usuario){
                     $('#abonado_'+i).val(formatMoney(nuevoAbono));
                     $('#pendiente_'+i).val(formatMoney(NuevoPendiente));
                     if(nuevoAbono > comisionTotal){
-                        $('#modal_avisos .modal-body').append('<p>La nueva comisión total <b style="color:green;">$'+formatMoney(comisionTotal)+'</b> es menor a lo abondado <b>$'+formatMoney(nuevoAbono)+'</b> (ya con los pagos eliminados),Se eliminar los pagos mostrados una vez guardado el cambio. <b style="color:red;">Aplicar los respectivos descuentos</b></p>');
+                        $('#modal_avisos .modal-body').append('<p>La nueva comisión total <b style="color:green;">'+formatMoney(comisionTotal)+'</b> es menor a lo abondado <b>'+formatMoney(nuevoAbono)+'</b> (ya con los pagos eliminados),Se eliminar los pagos mostrados una vez guardado el cambio. <b style="color:red;">Aplicar los respectivos descuentos</b></p>');
                     }
                     else{
-                        $('#modal_avisos .modal-body').append('<p>La nueva comisión total es de <b style="color:green;">$'+formatMoney(comisionTotal)+'</b>, se eliminaran los pagos mostrados una vez guardado el ajuste. El nuevo saldo abonado sera de <b>$'+formatMoney(nuevoAbono)+'</b>. <b>No se requiere aplicar descuentos</b> </p>');
+                        $('#modal_avisos .modal-body').append('<p>La nueva comisión total es de <b style="color:green;">'+formatMoney(comisionTotal)+'</b>, se eliminaran los pagos mostrados una vez guardado el ajuste. El nuevo saldo abonado sera de <b>'+formatMoney(nuevoAbono)+'</b>. <b>No se requiere aplicar descuentos</b> </p>');
                     }
                 }
             }
@@ -808,8 +823,8 @@ $(".buscarLote").click( function() {
             }
         ],
         ajax:{
-                "url": general_base_url+'Incidencias/getInCommissions/'+idLote,
-                "dataSrc": ""
+                url: general_base_url+'Incidencias/getInCommissions/'+idLote,
+                dataSrc: ""
             },
         pagingType: "full_numbers",
         fixedHeader: true,
@@ -898,25 +913,21 @@ $(".buscarLote").click( function() {
             return fechaNeodata+rescisionLote;
         }},
         {
-            "width": "8%",
-            "data": function( d ){
+            data: function( d ){
                 var lblStats = '';
                 switch(d.registro_comision){
                     case 7:
                         lblStats ='<span class="label lbl-warning">LIQUIDADA</span>';
                     break;
-                    
                     case 1:
                         lblStats ='<span class="label lbl-sky">COMISIÓN ACTIVA</span>';
                     break;
                     case 8:
                         lblStats ='<span class="label lbl-blueMaderas">NUEVA, rescisión</span>';
                     break;
-
                     case 0:
                         lblStats ='<span class="label lbl-blueMaderas">NUEVA, sin dispersar</span>';
                     break;
-
                     default:
                         lblStats ='-';
                     break;
@@ -924,43 +935,36 @@ $(".buscarLote").click( function() {
                 return lblStats;      
             }
         },
-        
- 
         { 
-            "width": "20%",
-            "orderable": false,
-            "data": function( data ){
+            orderable: false,
+            data: function( data ){
                 var BtnStats ='';
                 if(data.totalNeto2==null && data.idStatusContratacion > 8 ) {
-                    BtnStats += '<button class="btn-data btn-sky cambiar_precio" title="Cambiar precio" value="' + data.idLote +'" data-precioAnt="'+data.totalNeto2+'"><i class="fas fa-pencil-alt"></i></button>';
+                    BtnStats += '<button class="btn-data btn-sky cambiar_precio" data-toggle="tooltip"  data-placement="top" title="Cambiar precio" value="' + data.idLote +'" data-precioAnt="'+data.totalNeto2+'"><i class="fas fa-pencil-alt"></i></button>';
                     if(data.tipo_venta == 'null' || data.tipo_venta == 0  || data.tipo_venta == null){
-                        BtnStats += '<button href="#" value="'+data.idLote+'" data-nombre="'+data.nombreLote+'" data-tipo="'+data.tipo+'" data-tipo="I" class="btn-data btn-orangeYellow tipo_venta" title="Cambiar tipo de venta"><i class="fas fa-map-marker-alt"></i></button>';
+                        BtnStats += '<button href="#" value="'+data.idLote+'" data-nombre="'+data.nombreLote+'" data-tipo="'+data.tipo+'" data-tipo="I" class="btn-data btn-orangeYellow tipo_venta" data-toggle="tooltip"  data-placement="top" title="Cambiar tipo de venta"><i class="fas fa-map-marker-alt"></i></button>';
                     }
-                  
                 }
                 else {
                     if(data.registro_comision == 0 || data.registro_comision == 8) {
-                        BtnStats += '<button class="btn-data btn-sky cambiar_precio" title="Cambiar precio" value="' + data.idLote +'" data-precioAnt="'+data.totalNeto2+'"><i class="fas fa-pencil-alt"></i></button>';
+                        BtnStats += '<button class="btn-data btn-sky cambiar_precio" data-toggle="tooltip"  data-placement="top" title="Cambiar precio" value="' + data.idLote +'" data-precioAnt="'+data.totalNeto2+'"><i class="fas fa-pencil-alt"></i></button>';
                         if(data.tipo_venta == 'null' || data.tipo_venta == 0 || data.tipo_venta == null){
-                            BtnStats += '<button href="#" value="'+data.idLote+'" data-nombre="'+data.nombreLote+'" data-tipo="'+data.tipo+'" data-tipo="I" class="btn-data btn-orangeYellow tipo_venta" title="Cambiar tipo de venta"><i class="fas fa-map-marker-alt"></i></button><button href="#" value="'+data.idLote+'" data-idLote="'+data.idLote+'"  data-cliente="'+data.id_cliente+'" data-sedesName="'+data.sede+'"  data-sedes="'+data.id_sede+'" data-nombre="'+data.nombreLote+'" data-tipo="'+data.tipo+'" data-tipo="1" class="btn-data btn-violetDeep cambioSede"  title="Cambio de sede"> <i class="fas fa-map-signs"></i> </button> '
-
+                            BtnStats += '<button href="#" value="'+data.idLote+'" data-nombre="'+data.nombreLote+'" data-tipo="'+data.tipo+'" data-tipo="I" class="btn-data btn-orangeYellow tipo_venta" data-toggle="tooltip"  data-placement="top" title="Cambiar tipo de venta"><i class="fas fa-map-marker-alt"></i></button><button href="#" value="'+data.idLote+'" data-idLote="'+data.idLote+'"  data-cliente="'+data.id_cliente+'" data-sedesName="'+data.sede+'"  data-sedes="'+data.id_sede+'" data-nombre="'+data.nombreLote+'" data-tipo="'+data.tipo+'" data-tipo="1" class="btn-data btn-violetDeep cambioSede"  data-toggle="tooltip"  data-placement="top" title="Cambio de sede"> <i class="fas fa-map-signs"></i> </button> '
                         }     
                     }
                     else if(data.registro_comision == 7 ) {
-                        BtnStats = '<button class="btn-data btn-sky cambiar_precio" title="Cambiar precio" value="' + data.idLote +'"  data-precioAnt="'+data.totalNeto2+'"><i class="fas fa-pencil-alt"></i></button><button class="btn-data btn-orangeYellow update_bandera" title="Cambiar estatus" value="' + data.idLote +'" data-nombre="'+data.nombreLote+'"><i class="fas fa-sync-alt"></i></button>';
-                        BtnStats += '<button class="btn-data btn-green inventario"  title="Cambiar usuarios" value="' + data.idLote +'" data-registro="'+data.registro_comision+'" data-cliente="'+data.id_cliente+'" data-precioAnt="'+data.totalNeto2+'"><i class="fas fa-user-plus"></i></button>';
-
+                        BtnStats = '<button class="btn-data btn-sky cambiar_precio" data-toggle="tooltip"  data-placement="top" title="Cambiar precio" value="' + data.idLote +'"  data-precioAnt="'+data.totalNeto2+'"><i class="fas fa-pencil-alt"></i></button><button class="btn-data btn-orangeYellow update_bandera" data-toggle="tooltip"  data-placement="top" title="Cambiar estatus" value="' + data.idLote +'" data-nombre="'+data.nombreLote+'"><i class="fas fa-sync-alt"></i></button>';
+                        BtnStats += '<button class="btn-data btn-green inventario"  data-toggle="tooltip"  data-placement="top" title="Cambiar usuarios" value="' + data.idLote +'" data-registro="'+data.registro_comision+'" data-cliente="'+data.id_cliente+'" data-precioAnt="'+data.totalNeto2+'"><i class="fas fa-user-plus"></i></button>';
                     }
                     else if(data.registro_comision == 1 ) {
                         BtnStats = '<button href="#" value="'+data.idLote+'" data-estatus="'+data.idStatusContratacion+'" data-tipo="I" data-precioAnt="'+data.totalNeto2+'"  data-value="'+data.registro_comision+'" data-code="'+data.cbbtton+'" ' +
-                        'class="btn-data btn-gray verify_neodata" title="Ajustes"><i class="fas fa-wrench"></i></button><button class="btn-data btn-sky cambiar_precio" title="Cambiar precio" value="' + data.idLote +'"  data-precioAnt="'+data.totalNeto2+'"><i class="fas fa-pencil-alt"></i></button>';
-                        BtnStats += '<button class="btn-data btn-green inventario"  title="Cambiar usuarios" value="' + data.idLote +'" data-registro="'+data.registro_comision+'" data-cliente="'+data.id_cliente+'" data-precioAnt="'+data.totalNeto2+'"><i class="fas fa-user-plus"></i></button>';
-
+                        'class="btn-data btn-gray verify_neodata" data-toggle="tooltip"  data-placement="top" title="Ajustes"><i class="fas fa-wrench"></i></button><button class="btn-data btn-sky cambiar_precio" data-toggle="tooltip"  data-placement="top" title="Cambiar precio" value="' + data.idLote +'"  data-precioAnt="'+data.totalNeto2+'"><i class="fas fa-pencil-alt"></i></button>';
+                        BtnStats += '<button class="btn-data btn-green inventario"  data-toggle="tooltip"  data-placement="top" title="Cambiar usuarios" value="' + data.idLote +'" data-registro="'+data.registro_comision+'" data-cliente="'+data.id_cliente+'" data-precioAnt="'+data.totalNeto2+'"><i class="fas fa-user-plus"></i></button>';
                     }
                     else {
                         BtnStats = '<button href="#" value="'+data.idLote+'" data-estatus="'+data.idStatusContratacion+'" data-tipo="I" data-precioAnt="'+data.totalNeto2+'"  data-value="'+data.registro_comision+'" data-code="'+data.cbbtton+'" ' +
-                        'class="btn-data btn-gray verify_neodata" title="Ajustes"><i class="fas fa-wrench"></i></button><button class="btn-data btn-sky cambiar_precio" title="Cambiar precio" value="' + data.idLote +'" data-precioAnt="'+data.totalNeto2+'"><i class="fas fa-pencil-alt"></i></button><button class="btn-data btn-orangeYellow update_bandera" title="Cambiar estatus" value="' + data.idLote +'" data-nombre="'+data.nombreLote+'"><i class="fas fa-sync-alt"></i></button>';
-                        BtnStats += '<button class="btn-data btn-green inventario"  title="Cambiar usuarios" value="' + data.idLote +'" data-registro="'+data.registro_comision+'" data-cliente="'+data.id_cliente+'" data-precioAnt="'+data.totalNeto2+'"><i class="fas fa-user-plus"></i></button>';  
+                        'class="btn-data btn-gray verify_neodata" data-toggle="tooltip"  data-placement="top" title="Ajustes"><i class="fas fa-wrench"></i></button><button class="btn-data btn-sky cambiar_precio" data-toggle="tooltip"  data-placement="top" title="Cambiar precio" value="' + data.idLote +'" data-precioAnt="'+data.totalNeto2+'"><i class="fas fa-pencil-alt"></i></button><button class="btn-data btn-orangeYellow update_bandera" data-toggle="tooltip"  data-placement="top" title="Cambiar estatus" value="' + data.idLote +'" data-nombre="'+data.nombreLote+'"><i class="fas fa-sync-alt"></i></button>';
+                        BtnStats += '<button class="btn-data btn-green inventario" data-toggle="tooltip"  data-placement="top" title="Cambiar usuarios" value="' + data.idLote +'" data-registro="'+data.registro_comision+'" data-cliente="'+data.id_cliente+'" data-precioAnt="'+data.totalNeto2+'"><i class="fas fa-user-plus"></i></button>';  
                     
                     }
                 }
@@ -985,17 +989,17 @@ $(".buscarLote").click( function() {
         $("#modal_pagadas .modal-body").html("");
         $("#modal_pagadas .modal-footer").html("");
 
-        $("#modal_pagadas .modal-body").append('<h4 class="modal-title">Cambiar precio del lote <b>'+row.data().nombreLote+'</b></h4><br><em>Precio actual: $<b>'+formatMoney(precioAnt)+'</b></em>');
+        $("#modal_pagadas .modal-body").append('<h4 class="modal-title mb-1">Cambiar precio del lote <b>'+row.data().nombreLote+'</b></h4><em>Precio actual: <b>'+formatMoney(precioAnt)+'</b></em>');
         $("#modal_pagadas .modal-body").append('<input type="hidden" name="idLote" id="idLote" readonly="true" value="'+idLote+'"><input type="hidden" name="precioAnt" id="precioAnt" readonly="true" value="'+precioAnt+'">');
         $("#modal_pagadas .modal-body").append(`<div class="form-group">
-        <label class="control-label" >Nuevo precio</label>
+        <label class="control-label mt-0" >Nuevo precio (<span class="isRequired">*</span>)</label>
         <input type="text" name="precioL" onblur="verificar(${precioAnt})" required id="precioL" class="form-control input-gral">
         <p id="msj" style="color:red;"></p>
         </div>`);
 
         $("#modal_pagadas .modal-footer").append(`
             <button type="button" class="btn btn-danger btn-simple" id="btn-cancelar" name="btn-cancelar"  data-dismiss="modal" value="CANCELAR"> CANCELAR</button>
-            <button type="submit" disabled id="btn-save" class="btn btn-gral-data" value="GUARDAR">GUARDAR</button>
+            <button type="submit" disabled id="btn-save" class="btn btn-primary" value="GUARDAR">GUARDAR</button>
             `);
         $("#modal_pagadas").modal();
     });
@@ -1007,32 +1011,33 @@ $(".buscarLote").click( function() {
 
         tipo = $(this).attr("data-tipo");
         let ventaTipo 
-        if(tipo == 'null' || tipo == undefined ){
+        if(tipo == 'null' || tipo == undefined || tipo == "undefined" ){
             ventaTipo = 'Sin tipo de venta';
         }else{
             ventaTipo = tipo;
         }
         $("#modal_pagadas .modal-body").html("");
         $("#modal_pagadas .modal-footer").html("");
-        $("#modal_pagadas .modal-body").append(`<h4 class="modal-title">Cambiar tipo de venta del lote <b>${row.data().nombreLote}</b></h4><br><em>Tipo de venta actual: <b>${ ventaTipo }</b></em>`);
+        $("#modal_pagadas .modal-body").append(`<h4 class="modal-title">Cambiar tipo de venta del lote <b>${row.data().nombreLote}</b></h4><em>Tipo de venta actual: <b>${ ventaTipo }</b></em>`);
         $("#modal_pagadas .modal-body").append(`<input type="hidden" name="idLote" id="idLote" readonly="true" value="${idLote}"><input type="hidden" name="precioAnt" id="precioAnt" readonly="true" value="">
         `);
         $("#modal_pagadas .modal-body").append(`
         <div class="form-group">
-        <label  class="label">Seleccionar tipo de venta</label>
-        <select class="form-control  select-gral tipo_v" id="tipo_v" name="tipo_v"
+        <label  class="control-label">Seleccionar tipo de venta (<span class="isRequired">*</span>)</label>
+        <select class="selectpicker  select-gral tipo_v" id="tipo_v" name="tipo_v"
         title="SELECCIONA UNA OPCIÓN" required data-live-search="true">
         <option value="1">Venta de particulares</option>
         <option value="2">Venta normal</option>
         </select>
         </div> ` );
 
+        $('#tipo_v').selectpicker('refresh');
         $("#modal_pagadas .modal-footer").append( ` 
             <div class="col-md-12">
                 <button type="button" class="btn btn-danger btn-simple"  data-dismiss="modal" >
                 CANCELAR
                 </button>
-                <button type="button" onclick="saveTipo(${idLote})" class="btn btn-gral-data" >
+                <button type="button" onclick="saveTipo(${idLote})" class="btn btn-primary" >
                 GUARDAR
                 </button> 
             </div>`);
@@ -1066,6 +1071,7 @@ $(".buscarLote").click( function() {
     }); 
 
     $("#tabla_incidencias_contraloria tbody").on("click", ".verify_neodata", function(e){
+        $('#spiner-loader').removeClass('hide');
         e.preventDefault();
         e.stopImmediatePropagation();
         var tr = $(this).closest('tr');
@@ -1098,19 +1104,17 @@ $(".buscarLote").click( function() {
                                     total = 0; 
                                 }
                                 var counts=0;
-                                /*<div class="col-md-6">Aplicado: '+formatMoney(total0)+'</div>*/ 
-                                $("#modal_NEODATA .modal-body").append('<div class="row"><div class="col-md-6"><h4><b>Precio lote: $'+formatMoney(data1[0].totalNeto2)+'</b></h4></div><div class="col-md-6">Aplicado: '+formatMoney(total0)+'</div></div>');
+                                $("#modal_NEODATA .modal-body").append('<div class="row aligned-row"><div class="col-md-6"><h4><b>Precio lote: '+formatMoney(data1[0].totalNeto2)+'</b></h4></div><div class="col-md-6 d-flex align-center">Aplicado: '+formatMoney(total0)+'</div></div>');
                                 if(parseFloat(data[0].Bonificado) > 0){
-                                    cadena = '<h4>Bonificación: <b style="color:#D84B16;">$'+formatMoney(data[0].Bonificado)+'</b></h4>';
+                                    cadena = '<h4>Bonificación: <b style="color:#D84B16;">'+formatMoney(data[0].Bonificado)+'</b></h4>';
                                 }
                                 else{
-                                    cadena = '<h4>Bonificación: <b >$'+formatMoney(0)+'</b></h4>';
+                                    cadena = '<h4>Bonificación: <b >'+formatMoney(0)+'</b></h4>';
                                 }
                                 $("#modal_NEODATA .modal-body").append('<div class="row"><div class="col-md-12"><h3><i class="fa fa-info-circle" style="color:gray;"></i> <i>'+row.data().nombreLote+'</i></b></h3></div></div><br>');
                                 $.getJSON( general_base_url + "Incidencias/getDatosAbonadoDispersion/"+idLote+"/"+1).done( function( data ){
-                                    
                                     $("#modal_NEODATA .modal-body").append(`
-                                        <div class="row">
+                                        <div class="row rowTitulos">
                                             <div class="col-md-2">
                                                 <p style="font-zise:10px;">
                                                     <b>USUARIOS</b></p>
@@ -1119,7 +1123,7 @@ $(".buscarLote").click( function() {
                                                 <b>%</b>
                                             </div>
                                             <div class="col-md-2">
-                                                <b>TOT. COMISIÓN</b>
+                                                <b>TOTAL DE LA COMISIÓN</b>
                                             </div>
                                             <div class="col-md-2">
                                                 <b><b>ABONADO</b>
@@ -1141,7 +1145,6 @@ $(".buscarLote").click( function() {
                                     $.each( data, function( i, v){
                                         $('#btn_'+i).tooltip({ boundary: 'window' })
                                         let nuevosaldo = 0;
-                                        let nuevoabono=0;
                                         let evaluar =0;
                                         if(tipo == "I"){
                                             saldo =0;                           
@@ -1245,7 +1248,7 @@ $(".buscarLote").click( function() {
                                         <button type="button" id="btnReload_${i}"  data-toggle="tooltip" 
                                         data-placement="top" 
                                         ${v.descuento == 0 || v.descuento > 1 ? 'style="display:none" ' : 'style="display:show" '} 
-                                        title="Regresar" onclick="Regresar(${i}, ${v.porcentaje_decimal},'${v.colaborador}','${v.id_rol_general}',${data1[0].totalNeto2})" 
+                                        title="Regresar" onclick="Regresar(${i}, ${v.porcentaje_decimal},'${v.colaborador}','${v.rol}',${data1[0].totalNeto2})" 
                                         class="btn btn-dark btn-info btn-fab btn-fab-mini"><span class="material-icons">cached</span>
                                         </button>`;
                                         // botton pago
@@ -1259,31 +1262,42 @@ $(".buscarLote").click( function() {
                                         `;
                                         $("#modal_NEODATA .modal-body").append(`<div class="row">
                                         <div class="col-md-2"><input id="id_disparador" type="hidden" name="id_disparador" value="1">
-                                        <input type="hidden" name="pago_neo" id="pago_neo" value="${total.toFixed(3)}">
-                                        <input type="hidden" name="id_rol" id="id_rol_${i}" value="${v.rol_generado}">
-                                        <input type="hidden" name="pending" id="pending" value="${pending}">
-                                        <input type="hidden" name="idLote" id="idLote" value="${idLote}">
-                                        <input id="id_comision_${i}" type="hidden" name="id_comision_${i}" value="${v.id_comision}">
-                                        <input id="id_usuario_${i}" type="hidden" name="id_usuario_${i}" value="${v.id_usuario}">
-                                        <input class="form-control ng-invalid ng-invalid-required" required readonly="true" value="${v.colaborador}" 
-                                            style="font-size:12px; ${v.descuento == 1 ? 'color:red;' : ''} "><b>
+                                            <label class="control-label pl-1 labelNombre hide">USUARIO</label>
+                                            <input type="hidden" name="pago_neo" id="pago_neo" value="${total.toFixed(3)}">
+                                            <input type="hidden" name="id_rol" id="id_rol_${i}" value="${v.rol_generado}">
+                                            <input type="hidden" name="pending" id="pending" value="${pending}">
+                                            <input type="hidden" name="idLote" id="idLote" value="${idLote}">
+                                            <input id="id_comision_${i}" type="hidden" name="id_comision_${i}" value="${v.id_comision}">
+                                            <input id="id_usuario_${i}" type="hidden" name="id_usuario_${i}" value="${v.id_usuario}">
+                                            <input class="form-control input-gral" required readonly="true" value="${v.colaborador}" style="font-size:12px; ${v.descuento == 1 ? 'color:red;' : ''} "><b>
                                             <p style="font-size:12px; ${v.descuento == 1 ? 'color:red;' : ''} ">${ v.descuento == "1" ? v.rol+' Incorrecto' : v.rol}</b>
                                             <b style="color:${v.descuento > 1 && v.observaciones != 'COMISIÓN CEDIDA'  ? 'red' : 'green'}; 
                                             font-size:10px;">${v.observaciones == 'COMISIÓN CEDIDA' ? '(COMISIÓN CEDIDA)' : ''} ${v.descuento > 1 && v.observaciones != 'COMISIÓN CEDIDA'  ? '(CEDIÓ COMISIÓN)' : ''}<b></p>
                                         </div>
                                         <div class="col-md-1">
-                                        <input class="form-control ng-invalid ng-invalid-required" ${(id_usuario_general != 1 && id_usuario_general != 2767 && id_usuario_general != 2826 && id_usuario_general != 4878 && id_usuario_general != 5957 && id_usuario_general != 2749) ? 'readonly="true"' : ''} style="${v.descuento == 1 ? 'color:red;' : ''}" ${v.descuento == 1 || v.descuento > 1 ? 'disabled' : ''} id="porcentaje_${i}" ${(v.rol_generado == 1 || v.rol_generado == 2 || v.rol_generado == 3 || v.rol_generado == 9 || v.rol_generado == 45 || v.rol_generado == 38) ? 'max="1"' : 'max="4"'}   onblur="Editar(${i},${precioAnt},${v.id_usuario})" value="${parseFloat(v.porcentaje_decimal)}">
-                                        <input type="hidden" id="porcentaje_ant_${i}" name="porcentaje_ant_${i}" value="${v.porcentaje_decimal}"><br>
-                                        <b id="msj_${i}" style="color:red;"></b>
+                                            <label class="control-label pl-1 labelPorcentaje hide">%</label>
+                                            <input class="form-control input-gral pl-0" ${(id_usuario_general != 1 && id_usuario_general != 2767 && id_usuario_general != 2826 && id_usuario_general != 4878 && id_usuario_general != 5957 && id_usuario_general != 2749) ? 'readonly="true"' : ''} style="${v.descuento == 1 ? 'color:red;' : ''}" ${v.descuento == 1 || v.descuento > 1 ? 'disabled' : ''} id="porcentaje_${i}" ${(v.rol_generado == 1 || v.rol_generado == 2 || v.rol_generado == 3 || v.rol_generado == 9 || v.rol_generado == 45 || v.rol_generado == 38) ? 'max="1"' : 'max="4"'}   onblur="Editar(${i},${precioAnt},${v.id_usuario})" value="${parseFloat(v.porcentaje_decimal)}">
+                                            <input type="hidden" id="porcentaje_ant_${i}" name="porcentaje_ant_${i}" value="${v.porcentaje_decimal}">
+                                            <b id="msj_${i}" style="color:red;"></b>
                                         </div>
-                                        <div class="col-md-2"><input class="form-control ng-invalid ng-invalid-required" style="${v.descuento == 1 ? 'color:red;' : ''}" readonly="true" id="comision_total_${i}" value="${formatMoney(v.comision_total)}"></div>
-                                        <div class="col-md-2"><input class="form-control ng-invalid ng-invalid-required" style="${v.descuento == 1 ? 'color:red;' : ''}" readonly="true" id="abonado_${i}" value="${formatMoney(v.abono_pagado)}"></div>
-                                        <div class="col-md-2"><input class="form-control ng-invalid ng-invalid-required" required readonly="true"  id="pendiente_${i}" value="${formatMoney(v.comision_total-v.abono_pagado)}"></div>
+                                        <div class="col-md-2">
+                                            <label class="control-label pl-1 labelTC hide">Total de la comisión</label>
+                                            <input class="form-control input-gral" style="${v.descuento == 1 ? 'color:red;' : ''}" readonly="true" id="comision_total_${i}" value="${formatMoney(v.comision_total)}">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label id="" class="control-label pl-1 labelAbonado hide">Abonado</label>
+                                            <input class="form-control input-gral" style="${v.descuento == 1 ? 'color:red;' : ''}" readonly="true" id="abonado_${i}" value="${formatMoney(v.abono_pagado)}">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label id="" class="control-label pl-1 labelPendiente hide">Pendiente</label>
+                                            <input class="form-control input-gral" required readonly="true"  id="pendiente_${i}" value="${formatMoney(v.comision_total-v.abono_pagado)}">
+                                        </div>
+                                        <label id="" class="control-label pl-2 labelAcciones hide">Acciones</label>
                                         <div class="col-md-3 botones">
-                                        ${(id_usuario_general != 1 && id_usuario_general != 2767 && id_usuario_general != 2826 && id_usuario_general != 4878 && id_usuario_general != 5957 && id_usuario_general != 2749) ? '' : boton}  
-                                        ${boton_topar}
-                                        ${boton_pago}
-                                        ${boton_regresar}
+                                            ${(id_usuario_general != 1 && id_usuario_general != 2767 && id_usuario_general != 2826 && id_usuario_general != 4878 && id_usuario_general != 5957 && id_usuario_general != 2749) ? '' : boton}  
+                                            ${boton_topar}
+                                            ${boton_pago}
+                                            ${boton_regresar}
                                         </div>
                                         </div> `);
                                         counts++
@@ -1316,55 +1330,16 @@ $(".buscarLote").click( function() {
                         
                     break;
                 }
+                $('#spiner-loader').addClass('hide'); 
             }
             else{
                 $("#modal_NEODATA .modal-body").append('<div class="row"><div class="col-md-12"><h3><b>No se encontró esta referencia en NEODATA de '+row.data().nombreLote+'.</b></h3><br><h5>Revisar con Administración.</h5></div> <div class="col-md-12"><center><img src="'+general_base_url+'static/images/robot.gif" width="320" height="300"></center></div> </div>');
+                $('#spiner-loader').addClass('hide'); 
             }
         });
         $("#modal_NEODATA").modal();
     });
 
-});
-
-$(document).on('click', '#save_asignacion', function(e) {
-    e.preventDefault();
-    var id_desarrollo = $("#sel_desarrollo").val();
-    var id_estado = ($('input:checkbox[id=check_edo]:checked').val() == 'on') ? 1 : 0;
-    var data_asignacion = new FormData();
-    data_asignacion.append("idLote", idLote);
-    data_asignacion.append("id_desarrollo", id_desarrollo);
-    data_asignacion.append("id_estado", id_estado);
-    if (id_desarrollo == null) {
-        alerts.showNotification("top", "right", "Debes seleccionar un desarrollo.", "danger");
-    } 
-    if (id_desarrollo != null) {
-        $('#save_asignacion').prop('disabled', true);
-        $.ajax({
-            url : general_base_url+'Administracion/update_asignacion/',
-            data: data_asignacion,
-            cache: false,
-            contentType: false,
-            processData: false,
-            type: 'POST', 
-            success: function(data){
-                response = JSON.parse(data);
-                if(response.message == 'OK') {
-                    $('#save_asignacion').prop('disabled', false);
-                    $('#seeInformationModal').modal('hide');
-                    alerts.showNotification("top", "right", "Asignado con éxito.", "success");
-                } else if(response.message == 'ERROR'){
-                    $('#save_asignacion').prop('disabled', false);
-                    $('#seeInformationModal').modal('hide');
-                    alerts.showNotification("top", "right", "Error al enviar la solicitud.", "danger");
-                }
-            },
-            error: function( data ){
-                $('#save_asignacion').prop('disabled', false);
-                $('#seeInformationModal').modal('hide');
-                alerts.showNotification("top", "right", "Error al enviar la solicitud.", "danger");
-            }
-        });
-    }
 });
 
 $(document).on('click', '.update_bandera', function(e){
@@ -1373,15 +1348,15 @@ $(document).on('click', '.update_bandera', function(e){
     $("#myUpdateBanderaModal .modal-header").html('');
     $("#myUpdateBanderaModal .modal-body").html('');
     $("#myUpdateBanderaModal .modal-footer").html('');
-    $("#myUpdateBanderaModal .modal-header").append('<h4 class="card-title"><b>Regresar a activas</b></h4>');
-    $("#myUpdateBanderaModal .modal-body").append( ` <div id="inputhidden"><p>¿Está seguro de regresar el lote <b>${nombre}</b> a activas?</p> <input type="hidden" name="id_pagoc" id="id_pagoc"><input type="hidden" name="param" id="param">`);
+    $("#myUpdateBanderaModal .modal-header").append('<h4 class="card-title text-center"><b>Regresar a activas</b></h4>');
+    $("#myUpdateBanderaModal .modal-body").append( ` <div id="inputhidden"><p class="text-center">¿Está seguro de regresar el lote <b>${nombre}</b> a activas?</p> <input type="hidden" name="id_pagoc" id="id_pagoc"><input type="hidden" name="param" id="param">`);
     $("#myUpdateBanderaModal .modal-footer").append(`
     <div class="row">
     <div class="col-md-12" style="align-content: left;">
     <button type="button" class="btn btn-danger btn-simple " data-dismiss="modal">
     CANCELAR
     </button>
-    <button type="submit" class="btn btn-gral-data" value="ACEPTAR" style="margin: 15px;">
+    <button type="submit" class="btn btn-primary" value="ACEPTAR">
     ACEPTAR
     </button>
     </div></div>`);
@@ -1391,7 +1366,6 @@ $(document).on('click', '.update_bandera', function(e){
 });
 
 $("#my_updatebandera_form").on('submit', function(e){
-  
     e.preventDefault();
     $.ajax({
         type: 'POST',
@@ -1419,10 +1393,8 @@ $("#my_updatebandera_form").on('submit', function(e){
 });
 
 $("#form_pagadas").submit(function(e) {;
-    
     e.preventDefault();
 }).validate({
-    
     submitHandler: function(form) {
         $('#btn-save').prop('disabled', true);
         $('#btn-cancelar').prop('disabled', true);
@@ -1441,9 +1413,7 @@ $("#form_pagadas").submit(function(e) {;
             success: function(data) {
                 if (data == 1) {
                     $("#modal_pagadas").modal('toggle');
-
                     $('#tabla_incidencias_contraloria').DataTable().ajax.reload();
-               
                     alerts.showNotification("top", "right", "Precio Actualizado", "success");
                 }else if(data == 2){
                     $("#modal_pagadas").modal('toggle');
@@ -1509,18 +1479,17 @@ function Confirmacion(i,name){
     $("#modal_avisos .modal-header").append('<h4 class="card-title"><b></b></h4>');
     $("#modal_avisos .modal-body").append(`
         <div id="inputhidden">
-            <label class="lbl-gral" >¿Estás seguro de DETENER la comisión al usuario <b>${name}</b>?<br><br>
+            <h4 class="text-center">¿Estás seguro de DETENER la comisión al usuario <b>${name}</b>?</h4>
             <b>NOTA:</B> El cambio ya no se podrá revertir.</label>
             <div class="form-group">
-                <textarea id="comentario_topaT_${i}" name="comentario_topaT_${i}" class="form-control input-gral" rows="3" 
-                    required placeholder="Describe el motivo por el cual se detendrán los pagos de esta comisión">
-                </textarea>
+                <label class="control-label">Describe el motivo por el cual se detendrán los pagos de esta comisión (<span class="isRequired">*</span>)</label>
+                <textarea id="comentario_topaT_${i}" name="comentario_topaT_${i}" class="text-modal" rows="3" required></textarea>
             </div>
         </div>`);
     $("#modal_avisos .modal-footer").append(`
             <button type="button" class="btn btn-danger btn-simple" data-dismiss="modal">CANCELAR
             </button>
-            <button type="submit"  onclick="ToparComision(${i})"  class="btn btn-gral-data" value="ACEPTAR" style="margin: 15px;">
+            <button type="submit"  onclick="ToparComision(${i})"  class="btn btn-primary" value="ACEPTAR">
             ACEPTAR
         </button>
             `);
@@ -1552,15 +1521,15 @@ function AgregarPago(i,pendiente,colab,id_rol_general){
 
     pendiente=pendiente2;
     // toFixed(2); 
-    $("#modal_add .modal-header").append('<h4 class="card-title"><b>Agregar Pago</b></h4>');
+    $("#modal_add .modal-header").append('<h4 class="card-title text-center"><b>Agregar Pago</b></h4>');
     $("#modal_add .modal-body").append(`
     <div id="inputhidden"><p>El monto no puede ser mayor a <b>${formatMoney(pendiente)}</b> para el <b>
     ${id_rol_general} - ${colab} </b> , en caso de ser mayor válida si hay algún pago en <b>NUEVAS</b> que puedas quitar.</p>
         <div class="form-group">
             <input id="monotAdd" name="monotAdd" min="1" class="form-control input-gral"  type="number" onblur="verifica_pago(${pendiente})" placeholder="Monto a abonar" maxlength="6"/>
             <p id="msj2" style="color:red;"></p>
-            <br>
-            <textarea id="comentario_topa" name="comentario_topa" class="form-control input-gral" rows="3" required placeholder="Describe el motivo por el cual se agrega este pago">
+            <label class="control-label">Describe el motivo por el cual se agrega este pago (<span class="isRequired">*</span>)</label>
+            <textarea id="comentario_topa" name="comentario_topa" class="text-modal rows="3" required>
             </textarea>
         </div>
     </div>`);
@@ -1568,7 +1537,7 @@ function AgregarPago(i,pendiente,colab,id_rol_general){
         <button type="button" class="btn btn-danger btn-simple"  data-dismiss="modal" value="CANCELAR">
         CANCELAR
         </button>
-        <button type="button" onclick="GuardarPago(${i})" class="btn btn-gral-data" disabled  id="btn-save2" value="ACEPTAR">
+        <button type="button" onclick="GuardarPago(${i})" class="btn btn-primary" disabled  id="btn-save2" value="ACEPTAR">
         ACEPTAR
         </button>
                 `);
@@ -1597,7 +1566,7 @@ function VlidarNuevos(i,usuario){
             for( var j = 0; j<data.length ; j++){
                 $('#modal_avisos .modal-body .table').append(`<tr>
                 <td>${data[j]['id_pago_i']}</td>
-                <td>$${formatMoney(data[j]['abono_neodata'])}</td>
+                <td>${formatMoney(data[j]['abono_neodata'])}</td>
                 <td>${data[j]['id_usuario']}</td>
                 <td>${data[j]['id_comision']}</td></tr>`);
             }
@@ -1817,7 +1786,7 @@ function Editar(i,precio,id_usuario){
                 if(len == 0){
                     let nuevoPendient=parseFloat(comisionTotal - abonado);
                     $('#pendiente_'+i).val(formatMoney(nuevoPendient));
-                    $('#modal_avisos .modal-body').append('<p>La nueva comisión total <b style="color:green;">$'+formatMoney(comisionTotal)+'</b> es menor a lo abondado, No se encontraron pagos disponibles para eliminar. <b style="color:red;">Aplicar los respectivos descuentos</b></p>');
+                    $('#modal_avisos .modal-body').append('<p>La nueva comisión total <b style="color:green;">'+formatMoney(comisionTotal)+'</b> es menor a lo abondado, No se encontraron pagos disponibles para eliminar. <b style="color:red;">Aplicar los respectivos descuentos</b></p>');
                 }
                 else{
                     let suma = 0;
@@ -1827,7 +1796,7 @@ function Editar(i,precio,id_usuario){
                         suma = suma + response[j]['abono_neodata'];
                         $('#modal_avisos .modal-body .table').append(`<tr>
                         <td>${response[j]['id_pago_i']}</td>
-                        <td>$${formatMoney(response[j]['abono_neodata'])}</td>
+                        <td>${formatMoney(response[j]['abono_neodata'])}</td>
                         <td>${response[j]['usuario']}</td>
                         <td>${response[j]['nombre']}</td></tr>`);
                     }
@@ -1837,10 +1806,10 @@ function Editar(i,precio,id_usuario){
                     $('#abonado_'+i).val(formatMoney(nuevoAbono));
                     $('#pendiente_'+i).val(formatMoney(NuevoPendiente));
                     if(nuevoAbono > comisionTotal){
-                        $('#modal_avisos .modal-body').append('<p>La nueva comisión total es de <b style="color:green;">$'+formatMoney(comisionTotal)+'</b> y es menor a lo abondado <b>$'+formatMoney(nuevoAbono)+'</b> (ya con los pagos eliminados), Se eliminar los pagos mostrados una vez guardado el cambio. <b style="color:red;"><br>Recuerda aplicar los respectivos descuentos</b></p>');
+                        $('#modal_avisos .modal-body').append('<p>La nueva comisión total es de <b style="color:green;">'+formatMoney(comisionTotal)+'</b> y es menor a lo abondado <b>'+formatMoney(nuevoAbono)+'</b> (ya con los pagos eliminados), Se eliminar los pagos mostrados una vez guardado el cambio. <b style="color:red;"><br>Recuerda aplicar los respectivos descuentos</b></p>');
                     }
                     else{
-                        $('#modal_avisos .modal-body').append('<p>La nueva comisión total es de <b style="color:green;">$'+formatMoney(comisionTotal)+'</b>, se eliminaran los pagos mostrados una vez guardado el ajuste. El nuevo saldo abonado sera de <b>$'+formatMoney(nuevoAbono)+'</b>. <br><b>No se requiere aplicar ningun descuento</b> </p>');
+                        $('#modal_avisos .modal-body').append('<p>La nueva comisión total es de <b style="color:green;">'+formatMoney(comisionTotal)+'</b>, se eliminaran los pagos mostrados una vez guardado el ajuste. El nuevo saldo abonado sera de <b>'+formatMoney(nuevoAbono)+'</b>. <br><b>No se requiere aplicar ningun descuento</b> </p>');
                     }
                     $('#modal_avisos .modal-body').append('<center><button type="button" class="btn btn-primary" data-dismiss="modal">ENTENDIDO</button></center>');
                 }
@@ -2121,3 +2090,25 @@ $("#form_sede").submit(function(e) {;
     }
 });
 
+function responsive(maxWidth) {
+    if (maxWidth.matches ) { //true mayor 991
+        $('.labelNombre').removeClass('hide');
+        $('.labelPorcentaje').removeClass('hide');
+        $('.labelTC').removeClass('hide');
+        $('.labelAbonado').removeClass('hide');
+        $('.labelPendiente').removeClass('hide');
+        $('.labelAcciones').removeClass('hide');
+        $('.rowTitulos').addClass('hide');
+    } else { //false menor 991
+        $('.labelNombre').addClass('hide');
+        $('.labelPorcentaje').addClass('hide');
+        $('.labelTC').addClass('hide');
+        $('.labelAbonado').addClass('hide');
+        $('.labelPendiente').addClass('hide');
+        $('.labelAcciones').addClass('hide');
+        $('.rowTitulos').removeClass('hide');
+    }
+}
+var maxWidth = window.matchMedia("(max-width: 992px)");
+responsive(maxWidth);
+maxWidth.addListener(responsive);
