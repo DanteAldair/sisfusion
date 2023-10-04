@@ -14,7 +14,7 @@ class Api extends CI_Controller
         date_default_timezone_set('America/Mexico_City');
         $this->load->helper(array('form'));
         $this->load->library(array('jwt_key', 'get_menu', 'jwt_actions'));
-        $this->load->model(array('Api_model', 'General_model', 'Internomex_model', 'Clientes_model', 'Usuarios_modelo'));
+        $this->load->model(array('Api_model', 'General_model', 'Internomex_model', 'Clientes_model', 'Usuarios_modelo', 'Contratacion_model'));
         $this->load->model([
             'opcs_catalogo/valores/AutorizacionClienteOpcs',
             'opcs_catalogo/valores/TipoAutorizacionClienteOpcs'
@@ -30,7 +30,7 @@ class Api extends CI_Controller
             if ($data->id == "")
                 echo json_encode(array("status" => -1, "message" => "Algún parámetro no tiene un valor especificado."), JSON_UNESCAPED_UNICODE);
             else {
-                if (!in_array($data->id, array(9860, 8134, 5918, 6489)))
+                if (!in_array($data->id, array(9860, 8134, 5918, 6489, 7890)))
                     echo json_encode(array("status" => -1, "message" => "Sistema no reconocido."), JSON_UNESCAPED_UNICODE);
                 else {
                     if ($data->id == 9860) // DRAGON
@@ -41,6 +41,8 @@ class Api extends CI_Controller
                         $arrayData = array("username" => "9m1%6n7DfR", "password" => "7%5bea3K&B^fMhfOw8Rj");
                     else if ($data->id == 6489) // CAJA
                         $arrayData = array("username" => "caja");
+                    else if ($data->id == 7890) // INVENTARIO
+                        $arrayData = array("username" => "RIdhILaPgy", "password" => "iQAVh0jsnvj277m4tcdL3jre");
                     $time = time();
                     $JwtSecretKey = $this->jwt_actions->getSecretKey($data->id);
                     $data = array(
@@ -445,6 +447,48 @@ class Api extends CI_Controller
                         }
                         if ($dbTransaction) // SUCCESS TRANSACTION
                             echo json_encode(array("status" => 1, "message" => "Consulta realizada con éxito.", "data" => $data2), JSON_UNESCAPED_UNICODE);
+                        else // ERROR TRANSACTION
+                            echo json_encode(array("status" => -1, "message" => "Servicio no disponible. El servidor no está listo para manejar la solicitud. Por favor, inténtelo de nuevo más tarde."), JSON_UNESCAPED_UNICODE);
+                    } 
+                    else
+                        echo json_encode($checkSingup);
+                }
+            }
+        }
+    }
+
+    function consultaInformacionInventario($rows_number = '') {
+        if (!isset(apache_request_headers()["Authorization"]))
+            echo json_encode(array("status" => -1, "message" => "La petición no cuenta con el encabezado Authorization."), JSON_UNESCAPED_UNICODE);
+        else {
+            if (apache_request_headers()["Authorization"] == "")
+                echo json_encode(array("status" => -1, "message" => "Token no especificado dentro del encabezado Authorization."), JSON_UNESCAPED_UNICODE);
+            else {
+                $token = apache_request_headers()["Authorization"];
+                $JwtSecretKey = $this->jwt_actions->getSecretKey(7890);
+                $valida_token = json_decode($this->validateToken($token, 7890));
+                if ($valida_token->status !== 200)
+                    echo json_encode($valida_token);
+                else {
+                    $result = JWT::decode($token, $JwtSecretKey, array('HS256'));
+                    $valida_token = Null;
+                    foreach ($result->data as $key => $value) {
+                        if(($key == "username" || $key == "password") && (is_null($value) || str_replace(" ","",$value) == '' || empty($value)))
+                            $valida_token = false;
+                    }
+                    if(is_null($valida_token))
+                        $valida_token = true;
+                    if(!empty($result->data) && $valida_token)
+                        $checkSingup = $this->jwt_actions->validateUserPass($result->data->username, $result->data->password);
+                    else {
+                        $checkSingup = null;
+                        echo json_encode(array("status" => -1, "message" => "Algún parámetro (usuario y/o contraseña) no vienen informados. Verifique que ambos parámetros sean incluidos."), JSON_UNESCAPED_UNICODE);
+                    }
+                    if(!empty($checkSingup) && json_decode($checkSingup)->status == 200) {
+                        
+                        $dbTransaction = $this->Contratacion_model->get_Inventario($rows_number);
+                        if ($dbTransaction) // SUCCESS TRANSACTION
+                            echo json_encode(array("status" => 1, "message" => "Consulta realizada con éxito.", "data" => $dbTransaction), JSON_UNESCAPED_UNICODE);
                         else // ERROR TRANSACTION
                             echo json_encode(array("status" => -1, "message" => "Servicio no disponible. El servidor no está listo para manejar la solicitud. Por favor, inténtelo de nuevo más tarde."), JSON_UNESCAPED_UNICODE);
                     } 

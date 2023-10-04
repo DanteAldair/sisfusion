@@ -128,6 +128,30 @@ class Contratacion_model extends CI_Model {
 
    }
 
+   function get_Inventario(){
+      $query = $this->db->query("SELECT  lot.idLote, lot.nombreLote, con.nombre as nombreCondominio, res.nombreResidencial, sl1.nombre as nombreStatuslote, con.idCondominio, CONVERT(varchar, CONVERT(money, lot.sup), 1) as superficie, lot.sup, lot.totalNeto2
+      FROM lotes lot
+      INNER JOIN condominios con ON con.idCondominio = lot.idCondominio
+      INNER JOIN residenciales res ON res.idResidencial = con.idResidencial 
+	  INNER JOIN statuslote sl1 ON sl1.idStatusLote = lot.idStatusLote
+      LEFT JOIN clientes cl ON cl.id_cliente = lot.idCliente 
+      LEFT JOIN usuarios u0 ON u0.id_usuario = cl.id_asesor
+      LEFT JOIN usuarios u1 ON u1.id_usuario = cl.id_coordinador
+      LEFT JOIN usuarios u2 ON u2.id_usuario = cl.id_gerente
+      LEFT JOIN usuarios u3 ON u3.id_usuario = cl.id_subdirector
+      LEFT JOIN usuarios u4 ON u4.id_usuario = cl.id_regional
+      LEFT JOIN usuarios u5 ON u5.id_usuario = cl.id_regional_2
+      LEFT JOIN usuarios u00 ON u00.id_usuario = lot.idAsesor
+      LEFT JOIN opcs_x_cats oxc ON oxc.id_opcion = cl.lugar_prospeccion AND oxc.id_catalogo = 9
+      LEFT JOIN prospectos pr ON pr.id_prospecto = cl.id_prospecto
+      LEFT JOIN (SELECT id_cliente, estatus, STRING_AGG(CONCAT(nombre, ' ', apellido_paterno, ' ', apellido_materno), ' - ') nombreCopropietario
+      FROM copropietarios GROUP BY id_cliente, estatus) co ON co.id_cliente = cl.id_cliente AND co.estatus = 1
+      LEFT JOIN opcs_x_cats oxc2 ON oxc2.id_opcion = cl.tipo_casa AND oxc2.id_catalogo = 35
+      WHERE lot.status = 1
+      ORDER BY lot.nombreLote");
+      return $query->result_array();
+   }
+
    function get_datos_historial($lote){
        return $this->db->query("SELECT nombreLote, idLiberacion, UPPER(observacionLiberacion) AS observacionLiberacion, precio, fechaLiberacion
               modificado, usuarios.nombre, status, idLote, UPPER(userLiberacion) AS userLiberacion,
