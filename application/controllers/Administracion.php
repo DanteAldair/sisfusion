@@ -3,7 +3,7 @@
 if (!defined('BASEPATH')) exit('No direct script access allowed');
 class Administracion extends CI_Controller{
 	public function __construct()
-	{
+	{ 
 		parent::__construct();
 		$this->load->model('Administracion_model');
 		$this->load->model('registrolote_modelo');
@@ -22,6 +22,7 @@ class Administracion extends CI_Controller{
 		$rutaUrl = explode($_SESSION['rutaActual'], $_SERVER["REQUEST_URI"]);
         $this->permisos_sidebar->validarPermiso($this->session->userdata('datos'),$rutaUrl[1],$this->session->userdata('opcionesMenu'));
     }
+	
 
 
 	public function index() {
@@ -65,27 +66,25 @@ class Administracion extends CI_Controller{
 		  	$dataPer[$i]['tipo_venta']=$data[$i]->tipo_venta;
 		  	$dataPer[$i]['descripcion']=$data[$i]->descripcion;
 		  	$dataPer[$i]['totalNeto']=$data[$i]->totalNeto;
+			$dataPer[$i]['totalValidado']=$data[$i]->totalValidado;
 		  	$dataPer[$i]['vl']=$data[$i]->vl;
 		  	$dataPer[$i]['nombreSede']=$data[$i]->nombreSede;
+		  	$dataPer[$i]['tipo_proceso']=$data[$i]->tipo_proceso;
 		  	$horaInicio = date("08:00:00");
 		  	$horaFin = date("16:00:00");
 		  	$arregloFechas = array();  
 		  	$fechaAccion = $data[$i]->fechaSolicitudValidacion;  
 		  	$ultimaFechaEstatus7 = $data[$i]->ultimaFechaEstatus7;  
-		  	$hoy_strtotime2 = strtotime($fechaAccion);
-		  	$sig_fecha_dia2 = date('D', $hoy_strtotime2);
-		  	$sig_fecha_feriado2 = date('d-m', $hoy_strtotime2);
-		  	$time = date('H:i:s', $hoy_strtotime2);
+		  	$hoy_strtotime2 = $data[$i]->fechaSolicitudValidacion=='' || empty($data[$i]->fechaSolicitudValidacion) ? '' : strtotime($fechaAccion);
+		  	$sig_fecha_dia2 = date('D', intval($hoy_strtotime2));
+		  	$sig_fecha_feriado2 = date('d-m', intval($hoy_strtotime2));
+		  	$time = date('H:i:s', intval($hoy_strtotime2));
 			
 			if($data[$i]->fechaSolicitudValidacion=='' || empty($data[$i]->fechaSolicitudValidacion))
                 $dataPer[$i]['fechaVenc2'] = 'N/A';
             else {
                 if ($time > $horaInicio and $time < $horaFin) {
-                    if ($sig_fecha_dia2 == "Sat" || $sig_fecha_dia2 == "Sun" ||
-                        $sig_fecha_feriado2 == "01-01" || $sig_fecha_feriado2 == "06-02" ||
-                        $sig_fecha_feriado2 == "20-03" || $sig_fecha_feriado2 == "01-05" ||
-                        $sig_fecha_feriado2 == "16-09" || $sig_fecha_feriado2 == "20-11" || $sig_fecha_feriado2 == "19-11" ||
-                        $sig_fecha_feriado2 == "25-12") {
+                    if ($sig_fecha_dia2 == "Sat" || $sig_fecha_dia2 == "Sun" || $sig_fecha_feriado2 == "01-01" || $sig_fecha_feriado2 == "06-02" || $sig_fecha_feriado2 == "20-03" || $sig_fecha_feriado2 == "01-05" || $sig_fecha_feriado2 == "16-09" || $sig_fecha_feriado2 == "20-11" || $sig_fecha_feriado2 == "19-11" || $sig_fecha_feriado2 == "25-12") {
 						$fecha = $ultimaFechaEstatus7; // ANTES fechaAccion
                         $z = 0;
                         while ($z <= 1) {
@@ -94,21 +93,17 @@ class Administracion extends CI_Controller{
                             $sig_fecha = date("Y-m-d H:i:s", $sig_strtotime);
                             $sig_fecha_dia = date('D', $sig_strtotime);
                             $sig_fecha_feriado = date('d-m', $sig_strtotime);
-                            if ($sig_fecha_dia == "Sat" || $sig_fecha_dia == "Sun" ||
-                                $sig_fecha_feriado == "01-01" || $sig_fecha_feriado == "06-02" ||
-                                $sig_fecha_feriado == "20-03" || $sig_fecha_feriado == "01-05" ||
-                                $sig_fecha_feriado == "16-09" || $sig_fecha_feriado == "20-11" || $sig_fecha_feriado == "19-11" ||
-                                $sig_fecha_feriado == "25-12") {
-                            } else {
-                                $arregloFechas[$z] = $sig_fecha;
-                                $z++;
-                            }
-                            $fecha = $sig_fecha;
+                            if ($sig_fecha_dia == "Sat" || $sig_fecha_dia == "Sun" || $sig_fecha_feriado == "01-01" || $sig_fecha_feriado == "06-02" || $sig_fecha_feriado == "20-03" || $sig_fecha_feriado == "01-05" || $sig_fecha_feriado == "16-09" || $sig_fecha_feriado == "20-11" || $sig_fecha_feriado == "19-11" || $sig_fecha_feriado == "25-12") {
+							} else {
+								$arregloFechas[$z] = $sig_fecha;
+								$z++;
+							}
+							$fecha = $sig_fecha;
                         }
                         $d = end($arregloFechas);
                         $dataPer[$i]['fechaVenc2'] = $d;
                     } else {
-                        $fecha = $ultimaFechaEstatus7; // ANTES fechaAccion
+						$fecha = $ultimaFechaEstatus7; // ANTES fechaAccion
                         $z = 0;
                         while ($z <= 0) {
                             $hoy_strtotime = strtotime($fecha);
@@ -185,9 +180,9 @@ class Administracion extends CI_Controller{
             }
 	  	}
 		if($dataPer != null)
-		  echo json_encode($dataPer);
+			echo json_encode($dataPer);
 		else
-		  echo json_encode(array());
+		  	echo json_encode(array());
 	}
 
 	public function inventario()/*this is the function*/
@@ -384,7 +379,7 @@ class Administracion extends CI_Controller{
 				$data['message'] = 'FALSE';
 				echo json_encode($data);
 			}
-					
+					 
 	}
 	
 	public function editar_registro_loteRechazo_administracion_proceceso11() {

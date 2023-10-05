@@ -123,20 +123,31 @@ class General_model extends CI_Model
         return $this->db->query("SELECT * FROM roles_x_usuario WHERE idUsuario = $usuario");
     }
 
-    public function getUsersByLeader($rol, $secondRol){
+    public function getUsersByLeader($rol, $secondRol) {
         $idrol = $this->session->userdata('id_rol');
+        $extraSelect = "";
         if($idrol == 5)
             $idUsuario = $this->session->userdata('id_lider');
         else
             $idUsuario = $this->session->userdata('id_usuario');
 
-        return $this->db->query("(SELECT DISTINCT(u.id_usuario),u.* FROM roles_x_usuario rxu
+
+        if (in_array($this->session->userdata('id_usuario'), array(3, 28)))
+            $extraSelect = "UNION 
+            SELECT DISTINCT(u.id_usuario), u.* FROM roles_x_usuario rxu
+            INNER JOIN usuarios u  ON u.id_usuario = rxu.idUsuario  
+            WHERE rxu.idUsuario = 692";
+        
+        return $this->db->query("SELECT DISTINCT(u.id_usuario),u.* FROM roles_x_usuario rxu
         INNER JOIN usuarios u  ON u.id_lider = rxu.idUsuario  
-        WHERE rxu.idRol = $rol AND rxu.idUsuario =  $idUsuario AND u.id_rol =$secondRol)
-        UNION (SELECT DISTINCT(u.id_usuario), u.* FROM roles_x_usuario rxu
+        WHERE rxu.idRol = $rol AND rxu.idUsuario =  $idUsuario AND u.id_rol = $secondRol
+        UNION 
+        SELECT DISTINCT(u.id_usuario), u.* FROM roles_x_usuario rxu
         INNER JOIN usuarios u  ON u.id_usuario = rxu.idUsuario  
-        WHERE rxu.idRol = $rol AND rxu.idUsuario =  $idUsuario AND u.id_rol =$secondRol)");
+        WHERE rxu.idRol = $rol AND rxu.idUsuario =  $idUsuario AND u.id_rol = $secondRol
+        $extraSelect");
     }
+    
     function getCatalogOptions($id_catalogo)
     {
         return $this->db->query("SELECT id_opcion, id_catalogo, nombre FROM opcs_x_cats WHERE id_catalogo = $id_catalogo AND estatus = 1");
@@ -188,12 +199,14 @@ class General_model extends CI_Model
         } else
             return false;
     }
+    
     function permisosMenu($val){
         if($val == 1){
             $this->session->set_flashdata('error_usuario', '<div id="ele" class="col-md-11" role="alert"><center><b>¡NO TIENES ACCESO AL PANEL SOLICITADO!</b><br><span style="font-size:12px;">Verificar los datos o ponerse en contacto con un administrador.</span></center></div>');
             redirect(base_url() .$this->session->userdata('controlador'),'location');
         }
     }
+
     public function get_menu_opciones(){
         return $this->db->query("SELECT LOWER(pagina) pagina FROM Menu2 WHERE pagina != '' AND estatus=1 AND nombre !='Aparta en línea' AND rol in(SELECT id_opcion FROM opcs_x_cats where id_catalogo=1 and estatus=1) GROUP BY pagina");
     }
@@ -222,5 +235,30 @@ class General_model extends CI_Model
 
     function listSedes(){
         return $this->db->query("SELECT * FROM sedes WHERE estatus = 1");
+    }
+
+    function getClienteNLote($cliente){
+        return $this->db->query("SELECT cl.*, lo.sup, lo.idCondominio, lo.nombreLote, lo.tipo_venta, lo.ubicacion
+        FROM clientes cl
+        INNER JOIN lotes lo ON lo.idLote = cl.idLote
+        WHERE cl.id_cliente = $cliente");
+    }
+
+    public function getLider($id_gerente) {
+        return $this->db->query("SELECT us.id_lider as id_subdirector, 
+		(CASE 
+        WHEN us.id_lider = 7092 THEN 3 
+        WHEN us.id_lider IN (9471, 681, 609, 690, 2411) THEN 607 
+		WHEN us.id_lider = 692 THEN u0.id_lider
+        WHEN us.id_lider = 703 THEN 4
+        WHEN us.id_lider = 7886 THEN 5
+        ELSE 0 END) id_regional,
+		CASE 
+		WHEN (us.id_sede = '13' AND u0.id_lider = 7092) THEN 3
+		WHEN (us.id_sede = '13' AND u0.id_lider = 3) THEN 7092
+		ELSE 0 END id_regional_2
+        FROM usuarios us
+        INNER JOIN usuarios u0 ON u0.id_usuario = us.id_lider
+        WHERE us.id_usuario IN ($id_gerente)");
     }
 }

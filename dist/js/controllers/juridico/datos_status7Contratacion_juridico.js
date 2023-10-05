@@ -91,14 +91,14 @@ function fillTable(typeTransaction, beginDate, endDate, idResidencial,condominio
                 extend: 'excelHtml5',
                 text: '<i class="fa fa-file-excel-o" aria-hidden="true"></i>',
                 className: 'btn buttons-excel',
-                titleAttr: 'Registro de clientes',
-                title: 'Registro de cilentes',
+                titleAttr: 'REGISTRO DE ESTATUS 7',
+                title: 'V',
                 exportOptions: {
-                    columns: [1,2, 3, 4, 5, 6, 7, 8, 9, 10],
+                    columns: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
                     format: 
                     {
                         header:  function (d, columnIdx) {
-                            return ' ' + titulos[columnIdx] + ' ';
+                            return ' ' + titulos[columnIdx - 1] + ' ';
                         }
                     }
                 },
@@ -125,16 +125,20 @@ function fillTable(typeTransaction, beginDate, endDate, idResidencial,condominio
         },
         {
             "data": function (d) {
-                return `<span class="label lbl-oceanGreen">${d.tipo_venta}</span>`;
+                return `<span class="label lbl-green">${d.tipo_venta}</span>`;
+            }
+        },
+        {
+            data: function (d) {
+                return `<span class='label lbl-violetBoots'>${d.tipo_proceso}</span>`;
             }
         },
         {
             "data": function (d) {
-                if(d.etapa == null){
-                    return '<p class="m-0">' + d.nombreResidencial + '</p>' + '<b><p class="m-0">SIN ESPECIFICAR</p></b>';
-                } else {
-                    return '<p class="m-0">' + d.nombreResidencial + '</p>' + '<b><p class="m-0">' + d.etapa + '</p></b>';
-                }
+                if(d.etapa == null || d.etapa == "NULL")
+                    return `<p class="m-0">${d.nombreResidencial}</p><b><p class="m-0">SIN ESPECIFICAR</p></b>`;
+                else
+                    return `<p class="m-0">${d.nombreResidencial}</p><b><p class="m-0">${d.etapa}</p></b>`;
             }
         },
         {
@@ -249,10 +253,10 @@ function fillTable(typeTransaction, beginDate, endDate, idResidencial,condominio
                     } else {
                         cntActions = '';
                     }
-                    if (Array(2762, 6096, 6864, 10937, 10938, 12136, 12173, 13015, 2747).includes(user) ){
+                    if (Array(2762, 6096, 6864, 10937, 10938, 12136, 12173, 13015, 2747,13498).includes(user) ){
                         cntActions += '<button href="#" data-toggle="tooltip" data-placement="top" title= "CAMBIO DE SEDE" data-nomLote="' + data.nombreLote + '" data-lote="' + data.idLote + '" class="btn-data btn-gray change_sede"><span class="material-icons">pin_drop</span></button><br>';
                     }
-                    if ((Array("2762", "2845", "2747").includes(data.user) || Array(6096, 6864, 10937, 10938, 12136, 12173, 13015).includes(user))) {
+                    if ((Array("2762", "2845", "2747").includes(data.user) || Array(6096, 6864, 10937, 10938, 12136, 12173, 13015,13498).includes(user))) {
                         cntActions += '<button href="#" title= "REASIGNACIÓN" data-nomLote="' + data.nombreLote + '" data-usuario="' + data.juridico + '" data-lote="' + data.idLote + '" class="btn-data btn-warning change_user"><span class="material-icons">find_replace</span></button><br>';
                     }
                     var color = (data.idMovimiento == 36) ? '#58D68D' :
@@ -305,14 +309,16 @@ function setInitialValues() {
 let titulos = [];
 $("#Jtabla").ready(function () {
     $('#Jtabla thead tr:eq(0) th').each(function (i) {
-        var title = $(this).text();
-        titulos.push(title);
-        $(this).html('<input type="text" class="textoshead" data-toggle="tooltip" data-placement="top" title="' + title + '" placeholder="' + title + '"/>');
-        $('input', this).on('keyup change', function () {
-            if (tabla_6.column(i).search() !== this.value) {
-                tabla_6.column(i).search(this.value).draw();
-            }
-        });
+        if (i != 0) {
+            var title = $(this).text();
+            titulos.push(title);
+            $(this).html('<input type="text" class="textoshead" data-toggle="tooltip" data-placement="top" title="' + title + '" placeholder="' + title + '"/>');
+            $('input', this).on('keyup change', function () {
+                if (tabla_6.column(i).search() !== this.value) {
+                    tabla_6.column(i).search(this.value).draw();
+                }
+            });
+        }
     });
 
     setInitialValues();

@@ -41,11 +41,13 @@
     <div class="wrapper">
         <?php $this->load->view('template/sidebar'); ?>  
 
-            <div class="modal fade" id="modalData" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static"data-keyboard="false">
+            <div class="modal fade" id="modalData" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
                 <div class="modal-dialog modal-md">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal"aria-hidden="true"><i class="material-icons">clear</i></button>
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                <i class="material-icons">clear</i>
+                            </button>
                             <h4 class="modal-title">Usuario y Contraseña :</h4>
                         </div>
                             <div class="modal-body">
@@ -62,17 +64,18 @@
                                     <input  class="form-control input-gral pl-1 pr-1" readonly type="text" id="passPC" name="passPC" value="" >
                                 </div>
                             </div>
-                            <div class="modal-footer"> 
-                        </div>
+                            <div class="modal-footer"></div>
                     </div>
                 </div>    
             </div>
         
-            <div class="modal fade" id="BajaUser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static"data-keyboard="false">
+            <div class="modal fade" id="BajaUser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="material-icons">clear</i></button>
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                <i class="material-icons">clear</i>
+                            </button>
                             <h4 class="modal-title">Baja del usuario: <b id="nameUs"></b></h4>
                         </div>
                         <form id="BajaUserForm" name="BajaUsersForm" method="post">
@@ -128,13 +131,11 @@
                         </div>
                         <div class="modal-body">
                             <div role="tabpanel">
-                                <!-- Nav tabs -->
                                 <ul class="nav nav-tabs" role="tablist" style="background: #003d82;">
                                     <li role="presentation" class="active">
                                         <a href="#changelogUsersTab" aria-controls="changelogUsersTab" role="tab" data-toggle="tab">Bitácora de cambios</a>
                                     </li>
                                 </ul>
-                                <!-- Tab panes -->
                                 <div class="tab-content">
                                     <div role="tabpanel" class="tab-pane active" id="changelogUsersTab">
                                         <div class="row">
@@ -157,11 +158,13 @@
                 </div>
             </div>
 
-            <div class="modal fade" id="editUserModal" tabindex="-1" role="dialog"aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static"data-keyboard="false">
+            <div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="material-icons">clear</i></button>
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                <i class="material-icons">clear</i>
+                            </button>
                             <h4 class="modal-title">Edita tu información</h4>
                         </div>
                         <form id="editUserForm" name="editUsersForm" method="post">
@@ -176,7 +179,7 @@
                                         </div>
                                         <div class="col-sm-4">
                                             <div class="form-group">
-                                                <label class="control-label"><small class="isRequired"></small>Apellido paterno</label>
+                                                <label class="control-label">Apellido paterno (<span class="isRequired">*</span>)</label>
                                                 <input id="last_name" onkeyup="javascript:this.value=this.value.toUpperCase();" onchange="validateInputs(this);" name="last_name" type="text" class="form-control input-gral" required>
                                             </div>
                                         </div>
@@ -220,14 +223,16 @@
                                             <select class="selectpicker select-gral m-0" id="headquarter" name="headquarter" data-style="btn" data-show-subtext="true" data-live-search="true" title="SELECCIONA UNA OPCIÓN" data-size="7" data-container="body" required onchange="cleadFieldsHeadquarterChange()"></select>
                                         </div>
                                     </div>
-                                    <div class="col-estructura"></div>
+                                    <div class="col-estructura">
+                                    </div>
                                     <div class="col-sm-6" id="tipoMiembro_column">
                                         <div class="form-group overflow-hidden">
                                             <label class="control-label">Tipo de miembro (<small class="isRequired">*</small>)</label>
                                             <select class="selectpicker select-gral m-0" id="member_type" name="member_type" data-style="btn" data-show-subtext="true" data-live-search="true" title="SELECCIONA UNA OPCIÓN" data-size="7" data-container="body" required onchange="getLeadersList()"></select>
                                         </div>
                                     </div>
-                                    <div class="simbolico_column"></div>
+                                    <div class="simbolico_column">
+                                    </div>
                                         <div class="col-sm-6">
                                             <div class="form-group overflow-hidden">
                                                 <input type="hidden" name="rol_actual" id="rol_actual">
@@ -237,6 +242,15 @@
                                         </div>
                                     </div>
                                 </div>
+                                <!---LÍNEA DE VENTA--->
+                                <div class="container-fluid" id="lineaVenta"></div>
+                                <!--MULTIROL--->
+                                <div id="btnmultirol" class="container-fluid"></div>
+                                <input type="hidden" name="index" id="index" value="0">
+                                <div class="container-fluid">
+                                    <div class="row aligned-row" id="multirol"></div>
+                                </div>
+                                <!------------->
                                 <div class="container-fluid mt-1" id="ch">
                                     <div class="row">
                                         <div class="col-md-12 d-flex justify-end">
@@ -296,6 +310,35 @@
                     </div>
                 </div>
             </div>
+            <!-----MODAL PARA AVISO ELIMNAR ROL------->
+            <div class="modal fade" id="modalDelRol" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static"data-keyboard="false">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h6>¿Esta seguro que que desea eliminar este rol?</h6>
+                    </div>
+                        <form id="deleteRol" name="deleteRol" method="post">
+                            <div class="modal-body">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <input type="hidden" name="idRU" id="idRU">
+                                        <input type="hidden" name="indice" id="indice">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <button type="button" class="btn btn-danger btn-simple" data-dismiss="modal">Cancelar</button>
+                                        <button type="submit" class="btn btn-primary" id="btnS">Aceptar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div> 
+            <!---------------------------------------->
     
         <div class="content boxContent">
             <div class="container-fluid">

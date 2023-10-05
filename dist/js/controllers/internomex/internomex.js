@@ -186,6 +186,9 @@ function fillTableLotificacion(fechaInicio, fechaFin) {
                 beginDate: fechaInicio,
                 endDate: fechaFin
             }
+        },
+        initComplete: function(){
+            $("#spiner-loader").addClass('hide');
         }
     });
 }
@@ -215,7 +218,7 @@ function fillChangelogUsers(v) {
     dataMovimiento = '<b>Valor anterior:</b> ' + v.anterior + '\n' +
         '            <br>\n' +
         '            <b>Valor nuevo:</b> ' + v.nuevo + '\n';
-   $("#changelogUsers").append('<li class="timeline-inverted">\n' +
+            $("#changelogUsers").append('<li class="timeline-inverted">\n' +
         '    <div class="timeline-badge success"><span class="material-icons">done</span></div>\n' +
         '    <div class="timeline-panel">\n' +
         '            <label><h6 style="text-transform:uppercase">' + nombreMovimiento + '</h6></label><br>\n' +
@@ -266,6 +269,7 @@ $(document).on('click', '.searchByDateRange', function(){
 });
 
 $(document).on('click', '.find-results', function () {
+    $("#spiner-loader").removeClass('hide');
     $(".row-load").addClass("hide");
     $(".box-table").removeClass("hide");
     let fechaInicio = formatDate( $(".beginDate").val());

@@ -211,6 +211,12 @@ $("#tabla_deposito_seriedad").ready( function(){
         $('#asignar_prospecto_a_cliente').modal();
     });
 
+    $('#tabla_deposito_seriedad').on('draw.dt', function() {
+        $('[data-toggle="tooltip"]').tooltip({
+            trigger: "hover"
+        });
+    });
+
     let titulos_encabezado = [];
     $('#table_prospectos thead tr:eq(0) th').each( function (i) {
         var title = $(this).text();
@@ -421,7 +427,7 @@ function fillDataTable(idCondominio) {
             titleAttr: 'Tus ventas',
             title:"Tus ventas",
             exportOptions: {
-                columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+                columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
                 format: {
                     header: function (d, columnIdx) {
                         return ' ' + titulos_intxt[columnIdx] + ' ';
@@ -438,7 +444,7 @@ function fillDataTable(idCondominio) {
                 orientation: 'landscape',
                 pageSize: 'LEGAL',
                 exportOptions: {
-                    columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                    columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
                     format: {
                         header: function (d, columnIdx) {
                             return ' ' + titulos_intxt[columnIdx] + ' ';
@@ -460,6 +466,11 @@ function fillDataTable(idCondominio) {
             }
         },
         columns: [
+            {
+                data: function (d) {
+                    return `<span class='label lbl-violetBoots'>${d.tipo_proceso}</span>`;
+                }
+            },
             { "data": "nombreResidencial" },
             { "data": "nombreCondominio" },
             { "data": "nombreLote" },
@@ -686,6 +697,21 @@ function fillDataTable(idCondominio) {
                     ) {
                         buttons += `<button class="btn-data btn-green abrir_prospectos btn-fab btn-fab-mini" data-toggle="tooltip" data-placement="left" title="ASIGNAR PROSPECTO" data-idCliente="${d.id_cliente}" data-nomCliente="${d.nombreCliente}"> <i class="fas fa-user-check"></i></button>`;
                     }
+
+                    // Botón para descargar la carta de reubicación
+                    if (idMovimiento === MOVIMIENTOS.NUEVO_APARTADO) {
+                        if ([2, 3, 4].includes(parseInt(d.proceso))) {
+                            if ([2,4].includes(parseInt(d.proceso))) {
+                                const url = `${general_base_url}Reestructura/imprimirCartaReubicacion/${d.id_cliente}`;
+                                buttons += `<a href="${url}" target="_blank" class="btn-data btn-orangeYellow btn-fab btn-fab-mini" data-toggle="tooltip" data-placement="left" title="DESCARGAR CARTA REUBICACIÓN"><i class="fas fa-download"></i></a>`;
+                            }
+
+                            if (parseInt(d.proceso) === 3) {
+                                const url = `${general_base_url}Reestructura/imprimirCartaReestructura/${d.id_cliente}`;
+                                buttons += `<a href="${url}" target="_blank" class="btn-data btn-orangeYellow btn-fab btn-fab-mini" data-toggle="tooltip" data-placement="left" title="DESCARGAR CARTA REESTRUCTURA"><i class="fas fa-download"></i></a>`;
+                            }
+                        }
+                    }
                     return '<div class="d-flex justify-center">'+buttons+'</div>';
                 }
             }
@@ -745,12 +771,12 @@ $(document).on('click', '#save1', function(e) {
                     $('#save1').prop('disabled', false);
                     $('#modal1').modal('hide');
                     $('#tabla_deposito_seriedad').DataTable().ajax.reload();
-                    alerts.showNotification("top", "right", "Asegúrate de incluir los documentos: IDENTIFICACIÓN OFICIAL "+comprobante_domicilio+", RECIBOS DE APARTADO Y ENGANCHE Y DEPÓSITO DE SERIEDAD antes de llevar a cabo el avance.", "danger");
+                    alerts.showNotification("top", "right", response.error_message, "danger");
                 } else if(response.message == 'ERROR'){
                     $('#save1').prop('disabled', false);
                     $('#modal1').modal('hide');
                     $('#tabla_deposito_seriedad').DataTable().ajax.reload();
-                    alerts.showNotification("top", "right", "Error al envial la solicitud.", "danger");
+                    alerts.showNotification("top", "right", "Error al enviar la solicitud.", "danger");
                 } else if(response.message == 'MISSING_AUTORIZACION'){
                     $('#save1').prop('disabled', false);
                     $('#modal1').modal('hide');
@@ -766,6 +792,11 @@ $(document).on('click', '#save1', function(e) {
                     $('#modal1').modal('hide');
                     $('#tabla_deposito_seriedad').DataTable().ajax.reload();
                     alerts.showNotification("top", "right", "El correo electrónico y/o número telefónico no están verificados.", "danger");
+                } else if (response.message == 'MISSING_AUTFI') {
+                    $('#save1').prop('disabled', false);
+                    $('#modal1').modal('hide');
+                    $('#tabla_deposito_seriedad').DataTable().ajax.reload();
+                    alerts.showNotification("top", "right", "Autorización de mensualidad pendiente.", "danger");
                 }
             },
             error: function(){
@@ -821,7 +852,7 @@ $(document).on('click', '#guardar_re3pv', function(e) {
                     $('#guardar_re3pv').prop('disabled', false);
                     $('#enviarNuevamenteEstatus3PV  ').modal('hide');
                     $('#tabla_deposito_seriedad').DataTable().ajax.reload();
-                    alerts.showNotification("top", "right", "Asegúrate de incluir los documentos: IDENTIFICACIÓN OFICIAL "+comprobante_domicilio+", RECIBOS DE APARTADO Y ENGANCHE Y DEPÓSITO DE SERIEDAD antes de llevar a cabo el avance.", "danger");
+                    alerts.showNotification("top", "right", response.error_message, "danger");
                 } else if(response.message == 'ERROR'){
                     $('#guardar_re3pv').prop('disabled', false);
                     $('#enviarNuevamenteEstatus3PV  ').modal('hide');
@@ -892,7 +923,7 @@ $(document).on('click', '#save2', function(e) {
                     $('#save2').prop('disabled', false);
                     $('#modal2').modal('hide');
                     $('#tabla_deposito_seriedad').DataTable().ajax.reload();
-                    alerts.showNotification("top", "right", "Asegúrate de incluir los documentos; IDENTIFICACIÓN OFICIAL "+comprobante_domicilio+", RECIBOS DE APARTADO Y ENGANCHE y DEPÓSITO DE SERIEDAD antes de llevar a cabo el avance.", "danger");
+                    alerts.showNotification("top", "right", response.error_message, "danger");
                 } else if(response.message == 'ERROR'){
                     $('#save2').prop('disabled', false);
                     $('#modal2').modal('hide');
@@ -953,12 +984,27 @@ $(document).on('click', '#save3', function(e) {
                     $('#save3').prop('disabled', false);
                     $('#modal3').modal('hide');
                     $('#tabla_deposito_seriedad').DataTable().ajax.reload();
-                    alerts.showNotification("top", "right", "Asegúrate de incluir los documentos; IDENTIFICACIÓN OFICIAL "+comprobante_domicilio+", RECIBOS DE APARTADO Y ENGANCHE y DEPÓSITO DE SERIEDAD antes de llevar a cabo el avance.", "danger");
+                    alerts.showNotification("top", "right", response.error_message, "danger");
                 } else if(response.message == 'ERROR'){
                     $('#save3').prop('disabled', false);
                     $('#modal3').modal('hide');
                     $('#tabla_deposito_seriedad').DataTable().ajax.reload();
                     alerts.showNotification("top", "right", "Error al enviar la solicitud.", "danger");
+                } else if(response.message == 'MISSING_AUTORIZACION'){
+                    $('#save3').prop('disabled', false);
+                    $('#modal3').modal('hide');
+                    $('#tabla_deposito_seriedad').DataTable().ajax.reload();
+                    alerts.showNotification("top", "right", "EN PROCESO DE AUTORIZACIÓN. Hasta que la autorización no haya sido aceptada o rechazada, no podrás avanzar la solicitud.", "danger");
+                } else if(response.message == 'OBSERVACION_CONTRATO'){
+                    $('#save3').prop('disabled', false);
+                    $('#modal3').modal('hide');
+                    $('#tabla_deposito_seriedad').DataTable().ajax.reload();
+                    alerts.showNotification("top", "right", "EN PROCESO DE LIBERACIÓN. No podrás avanzar la solicitud hasta que el proceso de liberación haya concluido", "danger");
+                } else if (response.message == 'MISSING_AUTFI') {
+                    $('#save3').prop('disabled', false);
+                    $('#modal3').modal('hide');
+                    $('#tabla_deposito_seriedad').DataTable().ajax.reload();
+                    alerts.showNotification("top", "right", "Autorización de mensualidad pendiente.", "danger");
                 }
             },
             error: function( data ){
@@ -1641,47 +1687,19 @@ $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
 });
 
 function construirBotonEstatus(data, fechaVenc, classButton, atributoButton = '', titulo = 'ENVIAR ESTATUS') {
-    return `<a href='#' 
-                ${atributoButton}
-                data-tiComp='${data.tipo_comprobanteD}'
-                data-nomLote='${data.nombreLote}'
-                data-idCliente='${data.id_cliente}'
-                data-nombreResidencial='${data.nombreResidencial}'
-                data-nombreCondominio='${data.nombreCondominio}'
-                data-nombreLote='${data.nombreLote}'
-                data-idCondominio='${data.idCondominio}'
-                data-idLote='${data.idLote}'
-                data-fechavenc='${fechaVenc}'
-                class="btn-data btn-green ${classButton}"
-                data-toggle="tooltip"
-                data-placement="top"
-                title="${titulo}">
-        <i class="fas fa-check"></i>
-    </a>`;
+    return `<a href='#' ${atributoButton} data-tiComp='${data.tipo_comprobanteD}' data-nomLote='${data.nombreLote}' data-idCliente='${data.id_cliente}' data-nombreResidencial='${data.nombreResidencial}' data-nombreCondominio='${data.nombreCondominio}' data-nombreLote='${data.nombreLote}' data-idCondominio='${data.idCondominio}' data-idLote='${data.idLote}' data-fechavenc='${fechaVenc}' class="btn-data btn-green ${classButton}" data-toggle="tooltip" data-placement="top" title="${titulo}"> <i class="fas fa-check"></i></a>`;
 }
 
 function generarBotonesAutorizacion(clienteData) {
     let botones = '';
     if (clienteData.autorizacion_correo === null || clienteData.autorizacion_sms === null) {
         botones += `
-            <button class="btn-data btn-violetDeep btn-rounded btn-autorizacion"
-                    data-toggle="tooltip" 
-                    data-placement="left" 
-                    title="ENVÍO DE VERIFICACIONES"
-                    data-idCliente='${clienteData.id_cliente}'>
-                <i class="fas fa-send"></i>
-            </button>
+            <button class="btn-data btn-violetDeep btn-rounded btn-autorizacion" data-toggle="tooltip"  data-placement="left" title="ENVÍO DE VERIFICACIONES" data-idCliente='${clienteData.id_cliente}'><i class="fas fa-send"></i></button>
         `;
     }
     if (parseInt(clienteData.autorizacion_correo) === ESTATUS_AUTORIZACION.ENVIADO || parseInt(clienteData.autorizacion_sms) === ESTATUS_AUTORIZACION.ENVIADO) {
         botones += `
-            <button class="btn-data btn-azure btn-rounded btn-reenvio"
-                    data-toggle="tooltip" 
-                    data-placement="left" 
-                    title="REENVÍO DE VERIFICACIÓN"
-                    data-idCliente='${clienteData.id_cliente}'>
-                <i class="fas fa-rotate-right"></i>
-            </button>
+            <button class="btn-data btn-azure btn-rounded btn-reenvio" data-toggle="tooltip" data-placement="left" title="REENVÍO DE VERIFICACIÓN" data-idCliente='${clienteData.id_cliente}'><i class="fas fa-rotate-right"></i></button>
         `;
     }
 
@@ -1692,13 +1710,7 @@ function generarBotonesAutorizacion(clienteData) {
             parseInt(clienteData.autorizacion_sms) === ESTATUS_AUTORIZACION.ENVIADO
     ) {
         botones += `
-            <button class="btn-data btn-yellow btn-rounded btn-solicitar"
-                    data-toggle="tooltip" 
-                    data-placement="left"
-                    title="SOLICITAR EDICIÓN DEL REGISTRO" 
-                    data-idCliente='${clienteData.id_cliente}'>
-                <i class="fas fa-hand-paper-o"></i>
-            </button>
+            <button class="btn-data btn-yellow btn-rounded btn-solicitar" data-toggle="tooltip" data-placement="left" title="SOLICITAR EDICIÓN DEL REGISTRO" data-idCliente='${clienteData.id_cliente}'><i class="fas fa-hand-paper-o"></i></button>
         `;
     }
 

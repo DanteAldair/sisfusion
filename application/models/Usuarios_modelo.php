@@ -117,14 +117,6 @@ class Usuarios_modelo extends CI_Model
                     $id_lider = $this->session->userdata('id_lider') . ', 106';
                     $where = "(((id_lider IN ($id_lider) OR id_lider_2 IN ($id_lider)) AND id_rol IN (7, 9) AND (rfc NOT LIKE '%TSTDD%' AND ISNULL(correo, '' ) NOT LIKE '%test_%')) OR usuarios.id_usuario IN ($id_lider) OR usuarios.gerente_id IN ($id_lider))";
                 }
-                else if ($this->session->userdata('id_usuario') == 10795) { // ALMA GALICIA ACEVEDO QUEZADA
-                    $id_lider = $this->session->userdata('id_lider') . ', 671';
-                    $where = "(((id_lider IN ($id_lider) OR id_lider_2 IN ($id_lider)) AND id_rol IN (7, 9) AND (rfc NOT LIKE '%TSTDD%' AND ISNULL(correo, '' ) NOT LIKE '%test_%')) OR usuarios.id_usuario IN ($id_lider) OR usuarios.gerente_id IN ($id_lider))";
-                }
-                else if ($this->session->userdata('id_usuario') == 12449) { // MARCELA CUELLAR MORON
-                    $id_lider = $this->session->userdata('id_lider') . ', 654';
-                    $where = "(((id_lider IN ($id_lider) OR id_lider_2 IN ($id_lider)) AND id_rol IN (7, 9) AND (rfc NOT LIKE '%TSTDD%' AND ISNULL(correo, '' ) NOT LIKE '%test_%')) OR usuarios.id_usuario IN ($id_lider) OR usuarios.gerente_id IN ($id_lider))";
-                }
                 else if ($this->session->userdata('id_usuario') == 10270) { // ANDRES BARRERA VENEGAS
                     $id_lider = $this->session->userdata('id_lider') . ', 113';
                     $where = "(((id_lider IN ($id_lider) OR id_lider_2 IN ($id_lider)) AND id_rol IN (7, 9) AND (rfc NOT LIKE '%TSTDD%' AND ISNULL(correo, '' ) NOT LIKE '%test_%')) OR usuarios.id_usuario IN ($id_lider) OR usuarios.gerente_id IN ($id_lider))";
@@ -137,7 +129,7 @@ class Usuarios_modelo extends CI_Model
                     $where = "(((id_lider IN ($id_lider) OR id_lider_2 IN ($id_lider)) AND id_rol IN (7, 9) AND (rfc NOT LIKE '%TSTDD%' AND ISNULL(correo, '' ) NOT LIKE '%test_%')) OR usuarios.id_usuario IN ($id_lider) OR usuarios.gerente_id IN ($id_lider))";
                 }
                 else if ($this->session->userdata('id_usuario') == 12318) { // EMMA CECILIA MALDONADO RAMÍREZ
-                    $id_lider = $this->session->userdata('id_lider') . ', 11196, 5637';
+                    $id_lider = $this->session->userdata('id_lider') . ', 11196, 5637, 2599, 1507';
                     $where = "(((id_lider IN ($id_lider) OR id_lider_2 IN ($id_lider)) AND id_rol IN (7, 9) AND (rfc NOT LIKE '%TSTDD%' AND ISNULL(correo, '' ) NOT LIKE '%test_%')) OR usuarios.id_usuario IN ($id_lider) OR usuarios.gerente_id IN ($id_lider))";
                 }
                 else
@@ -328,19 +320,19 @@ class Usuarios_modelo extends CI_Model
         switch ($type) {
             case '2': // SUBDIRECTOR
                 return $this->db->query("SELECT id_usuario, CONCAT(nombre, ' ', apellido_paterno, ' ', ISNULL(apellido_materno, '')) nombre, id_sede FROM usuarios 
-                WHERE (id_rol = 1 AND estatus = 1) OR (id_usuario = $id_lider) OR (id_sede LIKE '%$headquarter%' AND id_rol = 2) ORDER BY nombre");
+                WHERE (id_rol = 1 AND estatus = 1) OR (id_usuario = $id_lider) OR (id_sede='$headquarter' AND id_rol = 2) ORDER BY nombre");
                 break;
             case '3': // GERENTE
-                $sede = '';
+                /*$sede = '';
                 $lider = "";
                 if ($headquarter == 11)
                     $sede = " OR id_sede='3'";
                 else if ($headquarter == 12)
                     $sede = " OR id_sede='5'";
                 else if ($headquarter == 15)
-                    $sede = " OR id_sede LIKE '%$headquarter%'";
+                    $sede = " OR id_sede='$headquarter'";*/
                     return $this->db->query("SELECT id_usuario, CONCAT(nombre, ' ', apellido_paterno, ' ', ISNULL(apellido_materno, '')) nombre, id_sede FROM usuarios WHERE 
-                                            id_rol = 2 AND (id_sede LIKE '%" . $headquarter . "%' $sede) $lider AND estatus = 1 ORDER BY nombre");
+                                            id_rol = 2 AND id_sede='$headquarter' AND estatus = 1 ORDER BY nombre");
                 break;
             case '4': // ASISTENTE DIRECTOR
                 return $this->db->query("SELECT id_usuario, CONCAT(nombre, ' ', apellido_paterno, ' ', ISNULL(apellido_materno, '')) nombre, id_sede FROM usuarios WHERE 
@@ -352,18 +344,18 @@ class Usuarios_modelo extends CI_Model
                 break;
             case '6': // ASISTENTE GERENTE
                 return $this->db->query("SELECT id_usuario, CONCAT(nombre, ' ', apellido_paterno, ' ', ISNULL(apellido_materno, '')) nombre, id_sede FROM usuarios WHERE 
-                                        id_rol = 3 AND id_sede LIKE '%" . $headquarter . "%' AND estatus = 1 ORDER BY nombre");
+                                        id_rol = 3 AND id_sede='$headquarter' AND estatus = 1 ORDER BY nombre");
                 break;
             case '7': // ASESOR
                 if ($this->session->userdata('id_usuario') == 32) { // VALIDACIÓN ÚNICA PARA ASISTENTE DE GERENTE MONSERRAT - GTE ISABEL
                     return $this->db->query("SELECT id_usuario, CONCAT(nombre, ' ', apellido_paterno, ' ', ISNULL(apellido_materno, '')) nombre, id_sede FROM usuarios WHERE 
-                                        id_rol = 9 AND id_sede LIKE '%" . $headquarter . "%' AND estatus = 1
+                                        id_rol = 9 AND id_sede='$headquarter' AND estatus = 1
                                         UNION ALL
                                         SELECT id_usuario, CONCAT(nombre, ' ', apellido_paterno, ' ', ISNULL(apellido_materno, '')) nombre, id_sede FROM usuarios WHERE 
                                         id_usuario = " . $this->session->userdata('id_lider') . " AND estatus = 1 ORDER BY nombre");
                 } else {
                     return $this->db->query("SELECT id_usuario, CONCAT(nombre, ' ', apellido_paterno, ' ', ISNULL(apellido_materno, '')) nombre, id_sede FROM usuarios WHERE 
-                                        id_rol IN (3, 9) AND id_sede LIKE '%" . $headquarter . "%' AND rfc NOT LIKE '%TSTDD%' AND correo NOT LIKE '%test_%' AND estatus = 1 ORDER BY nombre");
+                                        id_rol IN (3, 9) AND id_sede='$headquarter' AND rfc NOT LIKE '%TSTDD%' AND correo NOT LIKE '%test_%' AND estatus = 1 ORDER BY nombre");
                 }
                 break;
             case '9': // COORDINADOR DE VENTAS
@@ -372,7 +364,7 @@ class Usuarios_modelo extends CI_Model
                                         id_rol = 3 AND id_sede IN ('3', '6') AND rfc NOT LIKE '%TSTDD%' AND correo NOT LIKE '%test_%' AND estatus = 1 ORDER BY nombre");
                 } else {
                     return $this->db->query("SELECT id_usuario, CONCAT(nombre, ' ', apellido_paterno, ' ', ISNULL(apellido_materno, '')) nombre, id_sede FROM usuarios WHERE 
-                                        id_rol = 3 AND id_sede LIKE '%" . $headquarter . "%' AND rfc NOT LIKE '%TSTDD%' AND correo NOT LIKE '%test_%' AND estatus = 1 ORDER BY nombre");
+                                        id_rol = 3 AND id_sede='$headquarter' AND rfc NOT LIKE '%TSTDD%' AND correo NOT LIKE '%test_%' AND estatus = 1 ORDER BY nombre");
                 }
                 break;
             case '10': // EJECUTIVO ADMINISTRATIVO DE MKTD
@@ -623,7 +615,7 @@ class Usuarios_modelo extends CI_Model
     }
 
     function getPersonalInformation2($id)
-    {
+    { 
         return $this->db->query("SELECT id_usuario, nombre, apellido_paterno, apellido_materno, correo, usuario, telefono, rfc, usuario, contrasena, forma_pago FROM usuarios WHERE id_usuario = " . $id . "");
     }
     public function getChangeLogUsers($id_usuario){
@@ -643,7 +635,7 @@ class Usuarios_modelo extends CI_Model
             WHEN col_afect = 'forma_pago' THEN (SELECT nombre FROM opcs_x_cats WHERE id_opcion = anterior AND id_catalogo = 16)
             WHEN col_afect = 'id_sede' THEN (SELECT nombre FROM sedes WHERE CAST(id_sede AS VARCHAR(45)) = CAST(anterior AS VARCHAR(45)))
             WHEN col_afect = 'id_rol' THEN (SELECT nombre FROM opcs_x_cats WHERE id_opcion = anterior AND id_catalogo = 1)
-            WHEN col_afect = 'estatus' THEN (SELECT nombre FROM opcs_x_cats WHERE id_opcion = anterior AND id_catalogo =
+            WHEN col_afect = 'estatus' THEN (SELECT nombre FROM opcs_x_cats WHERE id_opcion = anterior AND id_catalogo = 3)
             ELSE anterior   
           END) AS anterior
           FROM auditoria
@@ -1042,29 +1034,134 @@ class Usuarios_modelo extends CI_Model
         $idSubdirector = ($idRolNuevo == 3) ? $idLiderNuevo : 'u2.id_lider';
         $idRegional = ($idRolNuevo == 2 ) ? $idLiderNuevo : 'u3.id_lider';
 
-        $query = $this->db->query("SELECT u0.id_usuario as id_asesor, 
-                $idLiderNuevo as id_coordinador,
-                (CASE u1.id_rol WHEN 3 THEN u1.id_usuario ELSE u2.id_usuario END) id_gerente,
-                (CASE u1.id_rol WHEN 3 THEN u1.id_lider ELSE u3.id_usuario END) id_subdirector,
-                (CASE u1.id_rol WHEN 3 THEN (CASE WHEN u2.id_lider = 2 THEN 0 ELSE u2.id_lider END) ELSE CASE 
-                WHEN u3.id_usuario = 7092 THEN 3 
-                WHEN u3.id_usuario IN (9471, 681, 609, 690) THEN 607 
-                WHEN u3.id_usuario = 692 THEN u3.id_lider
-                WHEN u3.id_usuario = 703 THEN 4
-                WHEN u3.id_usuario = 7886 THEN 5
-                ELSE 0 END END) id_regional,
-                CASE 
-                WHEN (($idSedeNueva = '13' AND u3.id_lider = 7092) OR ($idSedeNueva = '13' AND u2.id_lider = 7092)) THEN 3
-	            WHEN (($idSedeNueva = '13' AND u3.id_lider = 3) OR ($idSedeNueva = '13' AND u2.id_lider = 3)) THEN 7092
-                ELSE 0 END id_regional_2
+        $query = $this->db->query("SELECT u0.id_usuario AS id_asesor,
+                u1.id_usuario AS id_coordinador,
+                (CASE WHEN u0.id_lider = 832 THEN u0.id_lider WHEN u1.id_rol = 3 THEN u1.id_usuario ELSE u2.id_usuario END) AS id_gerente,
+                (CASE WHEN u1.id_rol = 3 THEN u1.id_lider WHEN u3.id_usuario IS NOT NULL THEN u3.id_usuario ELSE 0 END) AS id_subdirector,
+                CASE WHEN u3.id_usuario = 7092 
+                    THEN 3 
+                    WHEN u3.id_usuario IN (9471, 681, 609, 690, 2411) 
+                        THEN 607 
+                        WHEN u3.id_usuario = 692 
+                            THEN u3.id_lider 
+                            WHEN u3.id_usuario = 703 
+                                THEN 4 
+                                WHEN u3.id_usuario = 7886 
+                                    THEN 5 
+                                    WHEN u1.id_rol = 3 
+                                    THEN (CASE WHEN (u2.id_lider = 2 OR u3.id_lider = 2)
+                                        THEN 0 
+                                        ELSE u2.id_lider 
+                                    END)
+                                ELSE 0 
+                END AS id_regional,
+                (CASE WHEN (($idSedeNueva = '13' AND u3.id_lider = 7092) OR ($idSedeNueva = '13' AND u2.id_lider = 7092)) 
+                    THEN 3 
+                        WHEN (($idSedeNueva = '13' AND u3.id_lider = 3) OR ($idSedeNueva = '13' AND u2.id_lider = 3)) 
+                        THEN 7092 
+                        ELSE 0 
+                END) AS id_regional_2
             FROM usuarios u0 -- asesor
-            LEFT JOIN usuarios u1 ON u1.id_usuario = $idCoordinador -- coordinador 
-            LEFT JOIN usuarios u2 ON u2.id_usuario = $idGerente -- gerencia
-            LEFT JOIN usuarios u3 ON u3.id_usuario = $idSubdirector -- subdirector
-            LEFT JOIN usuarios u4 ON u4.id_usuario = $idRegional -- id_regional
-            LEFT JOIN usuarios u5 ON u5.id_usuario = u4.id_lider -- id_regional_2
+            LEFT JOIN usuarios u1 ON u1.id_usuario = (CASE WHEN u0.id_rol IN (9,3,2) THEN u0.id_usuario ELSE $idCoordinador END)  -- coordinador
+            LEFT JOIN usuarios u2 ON u2.id_usuario = (CASE WHEN u1.id_rol IN (3,2) THEN u1.id_usuario ELSE $idGerente END) -- gerente
+            LEFT JOIN usuarios u3 ON u3.id_usuario = (CASE WHEN u2.id_rol = 2 THEN u2.id_usuario ELSE $idSubdirector END)  -- subdirector
+            LEFT JOIN usuarios u4 ON u4.id_usuario = $idRegional  -- regional 1
+            LEFT JOIN usuarios u5 ON u5.id_usuario = u4.id_lider  -- regional 2
             WHERE u0.id_usuario = $idUsuario");
 
         return $query->row();
+    }
+    function getUserMultirol($id_usuario)
+    {
+        $query = $this->db->query("SELECT rxu.*,opc.nombre,s.nombre AS sede FROM roles_x_usuario rxu
+        INNER JOIN opcs_x_cats opc ON opc.id_opcion=rxu.idRol AND opc.id_catalogo=1
+        INNER JOIN sedes s ON s.id_sede = rxu.idSede
+        WHERE rxu.idUsuario = " . $id_usuario . " AND rxu.idRol=59 AND rxu.estatus=1");
+        return $query->result_array();
+    }
+    function borrarMulti($idRU,$modificado_por)
+    {
+        $response = $this->db->query("UPDATE roles_x_usuario SET estatus = 0,modificado_por=$modificado_por WHERE idRU = $idRU");
+        return $response;
+    }
+    function consultarLinea($sede,$puesto,$lider)
+    {   
+        $sedesSinRegional = array(5,2,3,6);
+        $columsQro = in_array($sede,$sedesSinRegional) ? '' : "         
+            ,CONCAT(reg.nombre, ' ', reg.apellido_paterno, ' ', reg.apellido_materno) AS regional_1,
+            regional.idSede idSedeReg,
+            sedeReg.nombre as sedeReg,
+            opcReg.nombre puestoReg ";
+        $leftQro = in_array($sede,$sedesSinRegional) ? '' : "         
+            LEFT JOIN (SELECT idUsuario,idSede,idRol FROM roles_x_usuario WHERE idRol=59 AND estatus=1) regional ON regional.idSede=$sede
+            LEFT JOIN usuarios reg ON reg.id_usuario=regional.idUsuario
+            LEFT JOIN sedes sedeReg ON sedeReg.id_sede = regional.idSede
+            LEFT JOIN opcs_x_cats opcReg ON opcReg.id_opcion=regional.idRol AND opcReg.id_catalogo=1"; 
+        $consulta = "";
+        if($puesto == 7){
+            $consulta = "SELECT 
+            (CASE WHEN coor.id_rol = 3 THEN 1 ELSE 0 END) banderaGer,
+            (CASE WHEN coor.id_rol = 3 THEN 'N/A' ELSE CONCAT(coor.nombre, ' ', coor.apellido_paterno, ' ', coor.apellido_materno) END) AS coordinador,
+			(CASE WHEN coor.id_rol = 3 THEN CONCAT(coor.nombre, ' ', coor.apellido_paterno, ' ', coor.apellido_materno) ELSE CONCAT(ger.nombre, ' ', ger.apellido_paterno, ' ', ger.apellido_materno) END) AS gerente,
+            (CASE WHEN coor.id_rol = 3 THEN sedeCoor.nombre ELSE sedeGer.nombre END) as sedeGerente,
+			(CASE WHEN coor.id_rol = 3 THEN 'N/A' ELSE sedeCoor.nombre END) sedeCoor,
+			(CASE WHEN coor.id_rol = 3 THEN CONCAT(ger.nombre, ' ', ger.apellido_paterno, ' ', ger.apellido_materno) ELSE CONCAT(sub.nombre, ' ', sub.apellido_paterno, ' ', sub.apellido_materno) END) sub,  
+            (CASE WHEN coor.id_rol = 3 THEN sedeGer.nombre ELSE sedeSub.nombre END) sedeSubdirector,
+			(CASE WHEN coor.id_rol = 3 THEN 'N/A' ELSE coor.id_sede END ) idSedeCoor,
+			(CASE WHEN coor.id_rol = 3 THEN coor.id_sede ELSE ger.id_sede END ) idSedeGer,
+			(CASE WHEN coor.id_rol = 3 THEN ger.id_sede ELSE sub.id_sede END ) idSedeSub,
+			(CASE WHEN coor.id_rol = 3 THEN 'Coordinador de ventas' ELSE opcCoor.nombre END) puestoCoor,
+			(CASE WHEN coor.id_rol = 3 THEN opcCoor.nombre ELSE opcGer.nombre END ) puestoGer,
+			(CASE WHEN coor.id_rol = 3 THEN opcGer.nombre ELSE opcSub.nombre  END ) puestoSub
+            $columsQro       
+            FROM usuarios coor
+            LEFT JOIN usuarios ger ON ger.id_usuario = coor.id_lider
+            LEFT JOIN usuarios sub ON sub.id_usuario = ger.id_lider
+            LEFT JOIN sedes sedeCoor ON sedeCoor.id_sede = coor.id_sede
+            LEFT JOIN sedes sedeGer ON sedeGer.id_sede = ger.id_sede
+            LEFT JOIN sedes sedeSub ON sedeSub.id_sede = sub.id_sede
+            $leftQro
+            LEFT JOIN opcs_x_cats opcCoor ON opcCoor.id_opcion=coor.id_rol AND opcCoor.id_catalogo=1
+            LEFT JOIN opcs_x_cats opcGer ON opcGer.id_opcion=ger.id_rol AND opcGer.id_catalogo=1
+            LEFT JOIN opcs_x_cats opcSub ON opcSub.id_opcion=sub.id_rol AND opcSub.id_catalogo=1
+            WHERE coor.id_usuario = $lider";
+        }
+        if($puesto == 9){
+            $consulta = "SELECT 
+            0 banderaGer,
+			CONCAT(ger.nombre, ' ', ger.apellido_paterno, ' ', ger.apellido_materno) AS gerente,
+            sedeGer.nombre as sedeGerente,
+            opcGer.nombre  puestoGer,
+            ger.id_sede  idSedeGer,
+			CONCAT(sub.nombre, ' ', sub.apellido_paterno, ' ', sub.apellido_materno) sub,  
+            sedeSub.nombre  sedeSubdirector,
+			sub.id_sede  idSedeSub,
+			opcSub.nombre puestoSub
+            $columsQro       
+            FROM usuarios ger
+            LEFT JOIN usuarios sub ON sub.id_usuario = ger.id_lider 
+            LEFT JOIN sedes sedeGer ON sedeGer.id_sede = ger.id_sede
+            LEFT JOIN sedes sedeSub ON sedeSub.id_sede  = (CASE sub.id_usuario 	WHEN 2 THEN 2 ELSE sub.id_sede END) 
+            $leftQro
+            LEFT JOIN opcs_x_cats opcGer ON opcGer.id_opcion=ger.id_rol AND opcGer.id_catalogo=1
+            LEFT JOIN opcs_x_cats opcSub ON opcSub.id_opcion=sub.id_rol AND opcSub.id_catalogo=1
+            WHERE ger.id_usuario = $lider";
+        }
+        if($puesto == 3){
+            $consulta = "SELECT 
+            0 banderaGer,
+			CONCAT(sub.nombre, ' ', sub.apellido_paterno, ' ', sub.apellido_materno) sub,  
+            sedeSub.nombre  sedeSubdirector,
+			sub.id_sede  idSedeSub,
+			opcSub.nombre puestoSub
+            $columsQro       
+            FROM usuarios sub
+            LEFT JOIN opcs_x_cats opcSub ON opcSub.id_opcion=sub.id_rol AND opcSub.id_catalogo=1
+            LEFT JOIN sedes sedeSub ON sedeSub.id_sede  = (CASE sub.id_usuario 	WHEN 2 THEN 2 ELSE sub.id_sede END) 
+            $leftQro
+            WHERE sub.id_usuario = $lider";
+        }
+        $response = $this->db->query($consulta);
+        return $response;
     }
 }

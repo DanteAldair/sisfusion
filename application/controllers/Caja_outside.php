@@ -886,7 +886,6 @@ class Caja_outside extends CI_Controller {
             //print_r($dataDocs);
             $dataDC = array();
             for ($i = 0; $i < count($dataDocs); $i++) {
-                //print_r($dataDocs[$i]['id_opcion']);
                 $dataDC[$i]['id_opcion'] = $dataDocs[$i]['id_opcion'];
                 $dataDC[$i]['id_catalogo'] = $dataDocs[$i]['id_catalogo'];
                 $dataDC[$i]['nombre'] = $dataDocs[$i]['nombre'];
@@ -894,7 +893,7 @@ class Caja_outside extends CI_Controller {
                 $dataDC[$i]['fecha_creacion'] = $dataDocs[$i]['fecha_creacion'];
                 $dataDC[$i]['creado_por'] = $dataDocs[$i]['creado_por'];
 
-                //print_r('Se debe de imprimir esto alv '.$data[$i]->nombre.': '.$data[$i]->id_opcion);
+                
                 $dataInsertHistorialDocumento = array(
                     'movimiento' => $dataDC[$i]['nombre'],/*nombre comp del mov*/
                     'modificado' => date('Y-m-d H:m:i'),/*date ahorita*/
@@ -903,10 +902,8 @@ class Caja_outside extends CI_Controller {
                     'idLote' => $data['condominio'][0]['idLote'],
                     'tipo_doc' => $dataDC[$i]['id_opcion']/*tipo num*/
                 );
-                /*inserta el documento justo aqui alv*/
+
                 $this->caja_model_outside->insertDocToHist($dataInsertHistorialDocumento);
-                //print_r($dataInsertHistorialDocumento);
-                /*termina la insersión*/
             }
 
         } elseif ($data['prospecto'][0]['personalidad_juridica'] == 2 || $data['prospecto'][0]['personalidad_juridica'] == 3) {
@@ -928,19 +925,11 @@ class Caja_outside extends CI_Controller {
                     'idLote' => $data['condominio'][0]['idLote'],
                     'tipo_doc' => $dataDocs[$i]['id_opcion']/*tipo num*/
                 );
-                /*inserta el documento justo aqui alv*/
+                
                 $this->caja_model_outside->insertDocToHist($dataInsertHistorialDocumento);
-                /*termina la insersión*/
+                
             }
         }
-        /*jala la evidencia si viene del LP 6*/
-        /**/
-
-        /*$rspns = '';
-        if ($data['prospecto'][0]['lugar_prospeccion'] == 6) //no activada hasta 12 04 21
-        {
-            $rspns = $this->addEvidenceToEvidencia_cliente($last_id, $id_prospecto);
-        }*/
 
         /***************************************/
         $this->actualizaProspecto($id_prospecto);
@@ -2356,7 +2345,7 @@ class Caja_outside extends CI_Controller {
             //$data['lider'] = $this->caja_model_outside->getLider($dataJson->id_gerente);
             if ($dataJson->id_asesor == $dataJson->id_coordinador)
                 $id_coordinador = 0;
-            else if($dataJson->id_coordinador == $dataJson->id_gerente &&)
+            else if($dataJson->id_coordinador == $dataJson->id_gerente)
                 $id_coordinador = 0;
             else
                 $id_coordinador = $dataJson->id_coordinador;
@@ -2390,11 +2379,94 @@ class Caja_outside extends CI_Controller {
 
     public function changeTitularName()
     {
-
         $data = json_decode(file_get_contents("php://input"));
         $id_cliente = $data->id_cliente;
         $personalidad_juridica = $data->personalidad_juridica;
 
+        $data_cliente = $this->caja_model_outside->checkTipoJuridico($id_cliente);
+        $pj_info_cliente = $data_cliente->personalidad_juridica;
+        $idLote = $data_cliente->idLote;
+
+        if($personalidad_juridica != $pj_info_cliente && ($data->editar===true)){
+            //se debe hacer el cambio de personalidad juridica en el árbol de documentos
+            //1: Persona Moral : 32
+            //2: Persona Física: 31
+            $documentacion_cliente = $this->caja_model_outside->documentacionActual($id_cliente);
+            $documentacion_vieja = array();
+            foreach ( $documentacion_cliente as $index => $elemento) {
+                if($documentacion_cliente[$index]['movimiento'] == 'COMPROBANTE DE DOMICILIO' &&
+                    $documentacion_cliente[$index]['expediente'] != null){
+                    array_push($documentacion_vieja, ($documentacion_cliente[$index]));
+                }
+                if($documentacion_cliente[$index]['movimiento'] == 'IDENTIFICACIÓN OFICIAL' &&
+                    $documentacion_cliente[$index]['expediente'] != null){
+                    array_push($documentacion_vieja, ($documentacion_cliente[$index]));
+                }
+                if($documentacion_cliente[$index]['movimiento'] == 'RECIBOS DE APARTADO Y ENGANCHE' &&
+                    $documentacion_cliente[$index]['expediente'] != null){
+                    array_push($documentacion_vieja, ($documentacion_cliente[$index]));
+                }
+                if($documentacion_cliente[$index]['movimiento'] == 'CUPÓN DE DESCUENTOS Y AUTORIZACIONES' &&
+                    $documentacion_cliente[$index]['expediente'] != null){
+                    array_push($documentacion_vieja, ($documentacion_cliente[$index]));
+                }
+                if($documentacion_cliente[$index]['movimiento'] == 'CORRIDA' &&
+                    $documentacion_cliente[$index]['expediente'] != null){
+                    array_push($documentacion_vieja, ($documentacion_cliente[$index]));
+                }
+                if($documentacion_cliente[$index]['movimiento'] == 'CARTA DOMICILIO CM' &&
+                    $documentacion_cliente[$index]['expediente'] != null){
+                    array_push($documentacion_vieja, ($documentacion_cliente[$index]));
+                }
+            }
+
+            $nueva_documentacion = $this->caja_model_outside->nuevaDocByTP($personalidad_juridica);
+            foreach ( $nueva_documentacion as $index2 => $elemento2) {
+                  // Recorrer la documentacion vieja y evitar en que en la nueva se repita la vieja
+                foreach ($documentacion_vieja as $index3 => $elemento3){
+                    if($documentacion_vieja[$index3]['movimiento'] == $nueva_documentacion[$index2]['nombre']){
+                        $nueva_documentacion[$index2]['expediente'] = $documentacion_vieja[$index3]['expediente'];
+                    }
+                    $nueva_documentacion[$index2]['modificado'] = $documentacion_vieja[$index3]['modificado'];
+                    $nueva_documentacion[$index2]['idCliente'] = $documentacion_vieja[$index3]['idCliente'];
+                    $nueva_documentacion[$index2]['idCondominio'] = $documentacion_vieja[$index3]['idCondominio'];
+                    $nueva_documentacion[$index2]['idLote'] = $documentacion_vieja[$index3]['idLote'];
+                    $nueva_documentacion[$index2]['idUser'] = $documentacion_vieja[$index3]['idUser'];
+                    $nueva_documentacion[$index2]['id_autorizacion'] = $documentacion_vieja[$index3]['id_autorizacion'];
+                    $nueva_documentacion[$index2]['estatus_validacion'] = $documentacion_vieja[$index3]['estatus_validacion'];
+
+                }
+            }
+
+            $arrayDocumentacion = array();
+            foreach ($nueva_documentacion as $documentoNuevo){
+                $arrayManejo = array(
+                    'movimiento' => $documentoNuevo['nombre'],
+                    'expediente' => (empty($documentoNuevo['expediente'])) ? null: $documentoNuevo['expediente'],
+                    'modificado' => date('Y-m-d H:i:s'),
+                    'status'     => 1,
+                    'idCliente'  => $id_cliente,
+                    'idCondominio'=> $documentoNuevo['idCondominio'],
+                    'idLote'     => $documentoNuevo['idLote'],
+                    'idUser'     => $documentoNuevo['idUser'],
+                    'tipo_documento' => 0,
+                    'id_autorizacion' => $documentoNuevo['id_autorizacion'],
+                    'tipo_doc'        => $documentoNuevo['id_opcion'],
+                    'estatus_validacion' => $documentoNuevo['estatus_validacion']
+                );
+
+                array_push($arrayDocumentacion, $arrayManejo);
+            }
+            if(count($arrayDocumentacion)>0){
+                //Deshabilitar el árbola ctual
+                $deshabilitados = $this->caja_model_outside->deshabDocsByLoteCliente($idLote, $id_cliente);
+                if($deshabilitados>0){
+                    //insertar el nuevo árbol
+                        $insertado = $this->General_model->insertBatch('historial_documento', $arrayDocumentacion);
+                }
+            }
+        }
+        
 
         if ($personalidad_juridica != NULL) {
 
@@ -2418,7 +2490,8 @@ class Caja_outside extends CI_Controller {
                 $response['message_upd_prospecto'] = 'Se actualizó correctamente el prospecto.';
             }
             /*end new function*/
-        } else {
+        }
+        else {
 
             $dato = array(
                 "nombre" => $data->nombre,
@@ -2687,5 +2760,7 @@ class Caja_outside extends CI_Controller {
         $datos["usuariosVentas"] = $this->caja_model_outside->allUserVentas();
         echo json_encode($datos);
     }
-    
+
+
+
 }
